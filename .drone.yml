@@ -1,0 +1,42 @@
+pipeline:
+  build_service:
+    image: node:6.11.1
+    commands:
+      - npm i -g yarn
+      - yarn install
+      - yarn global add gulp
+      - yarn run server-build
+      - yarn run testServer
+      - yarn cache clean
+
+  docker_service_onbuild:
+    image: plugins/docker:17.10
+    registry: ${DOCKER_REGISTRY}
+    mirror: ${DOCKER_REGISTRY_MIRROR}
+    username: ${DOCKER_USER}
+    password: ${DOCKER_PASSWORD}
+    repo: ${DOCKER_REGISTRY}/petstore
+    dockerfile: Dockerfile
+    tag:
+      - onbuild
+    when:
+      event: push
+      branch:
+        include: master
+
+  docker_service_tag:
+    image: plugins/docker:17.10
+    registry: ${DOCKER_REGISTRY}
+    mirror: ${DOCKER_REGISTRY_MIRROR}
+    username: ${DOCKER_USER}
+    password: ${DOCKER_PASSWORD}
+    repo: ${DOCKER_REGISTRY}/petstore
+    dockerfile: Dockerfile
+    tag:
+      - latest
+      - ${DRONE_TAG}
+    when:
+      event: tag
+      branch:
+        exclude: [refs/tags/BR*, refs/tags/br*]
+

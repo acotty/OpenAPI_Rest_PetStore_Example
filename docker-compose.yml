@@ -1,0 +1,155 @@
+version: "3.7"
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    max-size: "2m"
+    max-file: "2"
+
+services:
+  mongo:
+    image: mongo:4.4.4
+    hostname: mongo
+    container_name: mongo
+    restart: unless-stopped
+    volumes:
+      - /data/db
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password    
+    networks:
+      - test-network
+    logging: *default-logging      
+
+  mariadb:
+    image: mariadb:10.5.9
+    hostname: mariadb
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ChangeMe
+      MYSQL_USER: test
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: test
+    volumes:
+      - ./volumes/mariadb-data:/var/lib/mysql
+    ports:
+      - 8022:3306
+    networks:
+      - test-network
+    logging: *default-logging      
+
+  Ory_Hydra:
+    image: oryd/hydra:v1.10.1-alpine
+    hostname: Ory_Hydra
+    container_name: Ory_Hydra
+    restart: unless-stopped
+    links:
+      - mariadb
+    environment:
+      LOG_LEVEL: debug
+      URLS_SELF_ISSUER: https://localhost:9000
+      URLS_CONSENT: http://localhost:9020/consent
+      URLS_LOGIN: http://localhost:9020/login
+      SECRETS_SYSTEM: "this_needs_to_be_the_same_always_and_also_very_s3cuR3"
+      # - DSN=$DSN
+    ports:
+      - 9200:4444
+      - 9201:4445
+    networks:
+      - test-network
+    logging: *default-logging      
+  
+  portainer:
+    image: portainer/portainer-ce:2.1.1-alpine
+    hostname: portainer
+    container_name: portainer
+    restart: unless-stopped
+    # Admin User password: Password01
+    volumes:
+      # Linux container under linux:
+        #- /var/run/docker.sock:/var/run/docker.sock
+        #- ~/code/DataPersistent/portainer_data:/data
+      
+      # Linux container under windows:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer_data:/data
+      #- D:\Temp:/data
+      
+      # Windows container:
+      # Windows container:
+        #- \\.\pipe\docker_engine:\\.\pipe\docker_engine
+        #-C:\ProgramData\Portainer:C:\data 
+
+    ports:
+      - 8000:8000
+      - 9000:9000
+    logging: *default-logging      
+
+  rest-service:
+    hostname: rest-service
+    container_name: rest-service
+    restart: unless-stopped
+    build:
+      context: ./
+      dockerfile: Dockerfile.local
+    volumes:
+      - .:/app/
+    environment:
+      MONGODB_CONNECT_URL: mongodb://mongo-models:27017/gaming-model-db
+      DEALER_SERVICE_URL: http://service-dealer:10010
+      MASTER_LIST_SERVICE_URL: http://service-model:10010
+      LOG_EXPRESSION: gaming-service-model
+      LOG_LEVEL: debug      
+    # command:
+    #   - bash
+    #   - -c
+    #   # Install node-sass to get the host specific bindings.  OSX and linux are different
+    #   - yarn start
+    networks:
+      - test-network
+    logging: *default-logging      
+
+
+networks:
+  test-network:
+   name: docker-models-network
+
+# ------------------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------------
+# DOCKER WINDOWS PORT BINDING ERROR
+
+# ERROR: for mariadb  Cannot start service mariadb: 
+#     Ports are not available: listen tcp 0.0.0.0:8022: 
+#     bind: An attempt was made to access a socket in a way forbidden by its access permissions
+#
+#
+# C:\WINDOWS\system32>netsh interface ipv4 show excludedportrange protocol=tcp
+# 
+# Protocol tcp Port Exclusion Ranges
+# 
+# Start Port    End Port
+# ----------    --------  
+#      49687       49786  
+#      49838       49838     *  
+#      49839       49938  
+#      49939       50038  
+#      50039       50138  
+#      50139       50238  
+# * - Administered port exclusions.
+# 
+# 
+# https://github.com/docker/for-win/issues/3171
+# http://revertservice.com/10/winnat/
+# 
+# 
+# SOLUTION:
+# ========
+# from admin command prompt:
+# net stop winnat
+# sc config WinNat start= demand
+# ------------------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,9 @@
+FROM mhart/alpine-node:15.12
+
+# Install the application under /app/
+# COPY . /app/
+
+# Run the app
+EXPOSE  10010
+WORKDIR /app
+CMD ["yarn", "start"]

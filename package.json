@@ -1,0 +1,63 @@
+{
+  "name": "rest-service-example",
+  "version": "0.0.1",
+  "description": "Rest Service Example",
+  "main": "index.js",
+  "license": "BSD-3-Clause",
+  "angular-cli": {},
+  "scripts": {
+    "run": "node index",
+    "start": "yarn run server-build && node index",
+    "test": "yarn run server-test",
+    "post-install": "yarn run server-build",
+    "server-test": "yarn run server-build && cross-env NODE_ENV=test ./node_modules/.bin/nyc ./node_modules/.bin/mocha --timeout 120000",
+    "testServer":       "./node_modules/.bin/cross-env NODE_ENV=test ./node_modules/.bin/nyc ./node_modules/.bin/mocha --timeout 120000",
+    "server-build": "./node_modules/.bin/gulp",
+    "test:coverage": "./node_modules/.bin/nyc report"
+  },
+  "dependencies": {
+    "app-root-path": "^3.0.0",
+    "base64-url": "^2.3.3",
+    "config": "^3.3.6",
+    "lodash": "^4.17.21",
+    "moment-timezone": "^0.5.33",
+    "typeorm": "^0.2.32",
+    "request-data": "^1.4.1",
+    "rmdir": "^1.2.0",
+    "somersault": "^1.3.0",
+    "swagger-service-skeleton": "https://github.com/acotty/swagger-service-skeleton/releases/download/v2.0.0-beta.2/swagger-service-skeleton-v2.0.0-beta.2.tgz",
+    "xlsx": "^0.16.9",
+    "yamljs": "^0.3.0",
+    "winston": "^3.3.3",
+    "mysql2": "^2.2.5",
+    "mssql": "^6.3.1",
+    "mongodb": "^3.6.6"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.16",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "14.14.37",
+    "@types/supertest": "^2.0.11",
+    "@types/yamljs": "^0.2.31",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "cross-env": "^7.0.3",
+    "gulp": "^4.0.2",
+    "gulp-sourcemaps": "3.0.0",
+    "gulp-tslint": "^8.1.4",
+    "gulp-typescript": "5.0.1",
+    "mocha": "^8.3.2",
+    "nock": "^13.0.11",
+    "nyc": "15.1.0",
+    "supertest": "^6.1.3",
+    "tslint": "^5.20.1",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.4"
+  },
+  "resolutions": {
+    "source-map": "~0.6.1"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  }
+}

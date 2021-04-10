@@ -1,0 +1,13 @@
+DatabaseTypeORM:
+  Type: TypeORM_TYPE
+  Host: TypeORM_HOST
+  Port: TypeORM_PORT
+  UserName: TypeORM_UserName
+  Password: TypeORM_Password
+  DatabaseName: TypeORM_DatabaseName
+
+api:
+  listenPort: PORT
+
+export:
+  timezone: EXPORT_TIMEZONE

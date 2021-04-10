@@ -1,0 +1,24 @@
+import { LogMessageSchema } from "../schemas/LogMessage";
+import { LogMessage } from "../interfaces/LogMessage";
+
+const CREATE_SUCCESS_MESSAGE = "Successfully created a new log entry";
+
+export class LogMessageController {
+/*
+ public addLogMessage(username: string, modelLogObject: any, responder) {
+    const modelLog = new LogMessage(username, modelLogObject);
+
+    // swagger object screws with the object.
+    // we need to re-pass the object as json for mongoose schema to work properly
+    const modelLogJsonFormat = JSON.parse(JSON.stringify(modelLog));
+    new LogMessageSchema(modelLogJsonFormat).save().then((res) => {
+        responder.success({
+          message: CREATE_SUCCESS_MESSAGE,
+          modelLog: res,
+        });
+    });
+  }
+*/
+}
+
+module.exports = LogMessageController;

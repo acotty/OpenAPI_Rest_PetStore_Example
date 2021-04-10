@@ -1,0 +1,9 @@
+FROM node:6.14.3-alpine
+
+# Install the application under /app/
+COPY . /app/
+
+# Run the app
+EXPOSE  10010
+WORKDIR /app
+CMD ["yarn", "start"]
