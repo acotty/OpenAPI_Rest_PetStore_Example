@@ -1,10 +1,10 @@
 DatabaseTypeORM:
   Type: "mysql"
   Host: "localhost"
-  Port: 8022
-  UserName: test
-  Password: password
-  DatabaseName: test
+  Port: 3306
+  UserName: PetTester
+  Password: Pa55word
+  DatabaseName: petstore
 
 api:
   listenPort: 10010

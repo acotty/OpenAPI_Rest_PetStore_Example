@@ -41,11 +41,11 @@
     "dist/src/**/*.js"
   ],
   "exclude": [
-    "src/contract/*.js"
-      "dist/src/contract/*.js",
-      "dist/src/schemas/*.js",
-      "dist/src/interfaces/*.js",
-      "dist/src/controllers/metadata.js",
-      "**/**/*.spec.js"
+    "src/contract/*.js",
+    "dist/src/contract/*.js",
+    "dist/src/schemas/*.js",
+    "dist/src/interfaces/*.js",
+    "dist/src/controllers/metadata.js",
+    "**/**/*.spec.js"
   ]
 }

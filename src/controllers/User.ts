@@ -1,13 +1,13 @@
-import { getRepository } from "typeorm";
-import Pet from "../models/Pet";
-import IPet from "../interfaces/Pet";
-import * as _ from "lodash";
+//import { getRepository } from "typeorm";
+//import Pet from "../models/Pet";
+//import IPet from "../interfaces/Pet";
+//import * as _ from "lodash";
 
-const CREATE_SUCCESS_MESSAGE = "Successfully created a new User";
-const DELETE_SUCCESS_MESSAGE = "Successfully deleted User";
-const GET_SUCCESS_MESSAGE = "Successfully found Users";
-const UPDATE_SUCCESS_MESSAGE = "Successfully updated User";
-const DEFAULT_PAGE_SIZE = 50;
+// const CREATE_SUCCESS_MESSAGE = "Successfully created a new User";
+// const DELETE_SUCCESS_MESSAGE = "Successfully deleted User";
+// const GET_SUCCESS_MESSAGE = "Successfully found Users";
+// const UPDATE_SUCCESS_MESSAGE = "Successfully updated User";
+// const DEFAULT_PAGE_SIZE = 50;
 
 export class UserController {
 /*

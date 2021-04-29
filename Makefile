@@ -7,17 +7,42 @@ USERNAME := $(shell whoami)
 
 UP=docker-compose up -d
 
-service:
-	$(UP) rest-service
+migrate:
+	docker stop hydra-migrate
+	docker rm hydra-migrate
+	$(UP) hydra-migrate
 
-min:
-	$(UP) mongo mariadb  Ory_Hydra
+services:
+	$(UP) mongo mariadb postgresd
+	$(UP) rest-service
+	
+mariadb:
+	$(UP) mariadb 
 	$(UP) portainer
 
+postgres:
+	$(UP) postgresd
+	$(UP) portainer
+
+mysql:
+	$(UP) portainer mysql
+
 up:
-	make min
+	$(UP) portainer mysql
+	sleep 10
+	$(UP) keycloak
+
+up2:
+	$(UP) portainer mariadb
+	$(UP) wso2am-analytics-worker wso2is-as-km wso2api-manager wso2am-analytics-dashboard
+	$(UP) adminer 
+
+service:
 	sleep 5
 	make service
+
+portainer:
+	$(UP) portainer
 
 restart:
 	docker-compose stop

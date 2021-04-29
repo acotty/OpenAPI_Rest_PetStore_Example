@@ -4,7 +4,7 @@ interface IOrder {
     quantity: number;
     shipDate: Date;
     status: string;
-    complete: Boolean;
+    complete: boolean;
 }
 
 export default IOrder;

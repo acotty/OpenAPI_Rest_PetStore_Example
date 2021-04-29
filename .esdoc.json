@@ -1,0 +1,12 @@
+{
+  "documentation": {
+    "outputPath": "./dist/documentation",
+    "paths": [
+    "./src/"
+    ],
+    "testType": "mocha",
+    "testRoot": "./tests",
+    "undocumentedIdentifiers": true,
+    "unexportedIdentifiers": true
+  }
+}

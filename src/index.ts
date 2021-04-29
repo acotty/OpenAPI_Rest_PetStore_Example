@@ -1,14 +1,17 @@
 "use strict";
 
 // NPM Dependencies
+import bodyParser from "./bodyParser";
 import * as config from "config";
+import * as cookieParser from "cookie-parser";
 import * as skeleton from "swagger-service-skeleton";
 import * as somersault from "somersault";
 import * as winston from "winston";
-import customServiceContract from "./contract/contract";
-import bodyParser from "./bodyParser";
-
 import { createConnection } from "typeorm";
+import * as stringify from "json-stringify-safe";
+
+
+import customServiceContract from "./contract/contract";
 import Address from "./models/Address";
 import Category from "./models/Category";
 import LogMessage from "./models/LogMessage";
@@ -79,6 +82,7 @@ createConnection({
   logging: true
 }).then(connection => {
   // here you can start to work with your entities
+//  console.log(connection);
 }).catch(error => {
   log.error(`TypeORM connection error, exit service! Error: ${error}`);
   log.error(`TypeORM_TYPE: ${TypeORM_TYPE}`);
@@ -97,7 +101,75 @@ createConnection({
 //   process.exit(2);
 // });
 
-// Mixin the elements we can"t store as static config values.
+// Middleware to run after some essentials/setup
+// but before the swagger-router.
+function beforeSwaggerTest() {
+  return (req, res, next) => {
+      console.log(`Called beforeSwaggerTest()`);
+      //console.log(`req : ${stringify(req, null, 4)}\n`);
+      next();
+  };
+}
+
+// Middleware to run after swagger-router, if the
+// request does not get handled by swagger (i.e.
+// custom error handling)
+function afterSwaggerTest() {
+  return (err, req, res, next) => {
+      console.log(`Called afterSwaggerTest()`);
+      console.log(`err : ${stringify(err, null, 4)}\n`);
+      //console.log(`req : ${stringify(req, null, 4)}\n`);
+      next();
+  };
+}
+
+// Middleware to run after filtering, but immediately before the controller
+function beforeControllerTest() {
+  return (err, req, res, next) => {
+      console.log(`Called beforeControllerTest()`);
+      console.log(`err : ${stringify(err, null, 4)}\n`);
+      //console.log(`req : ${stringify(req, null, 4)}\n`);
+      next();
+  };
+}
+
+// Middleware to run if the request has not been processed, so return 404
+function errorReqestNotProcessed404() {
+  return (req, res) => {
+      // Return a 404
+        res.status(404).json({message: `Not found`});
+  };
+}
+
+const enableKeycloakAuthorization = config.get("api.enableKeycloakAuthorization");
+
+let exegesisAuthenticator = {};
+if ( enableKeycloakAuthorization ) {
+  exegesisAuthenticator = {
+    // Both not used in OpenAPI, but can be enabled for testing...
+    // sessionKey: sessionAuthenticator,
+    // addBasicAuth() {
+    //   return [];
+    // },
+    petstoreAuthorise() {   // Thsi matches the securitySchemes in the OpenAPI yaml file
+      return { type: "success", user: "benbria", scopes: ["readOnly"] };
+    },
+  };
+  log.info("Keycloak Authentication is Enabled");
+} else {
+  log.info("Keycloak Authentication is Disabled");
+  exegesisAuthenticator = {
+    // Both not used in OpenAPI, but can be enabled for testing...
+    // sessionKey: sessionAuthenticator,
+    // addBasicAuth() {
+    //   return [];
+    // },
+    petstoreAuthorise() {   // Thsi matches the securitySchemes in the OpenAPI yaml file
+      return { type: "success", user: "all", scopes: ["*"] };
+    },
+  };
+}
+
 const generateInstance = () => skeleton({
   codegen: {
     templateSettings: {
@@ -112,10 +184,19 @@ const generateInstance = () => skeleton({
     origin: (origin, callback) => callback(null, origin),
   },
   customMiddleware: {
-    afterSwagger: [],
-    beforeController: [],
     beforeSwagger: [
+      // beforeSwaggerTest(),
+      cookieParser(),   // for a Keycloak token
       bodyParser(),
+    ],
+    beforeController: [
+      // beforeControllerTest()
+    ],
+    afterSwagger: [
+      // afterSwaggerTest()
+    ],
+    errorProcessing: [
+      // errorReqestNotProcessed404()
     ],
   },
   ioc: {
@@ -133,12 +214,19 @@ const generateInstance = () => skeleton({
     // swagger: serviceContract,
     swagger: customServiceContract,
   },
+  exegesisOptions: {
+    authenticators: exegesisAuthenticator,
+  }
 });
 
 function bootstrap() {
   // container.register("dealerService", new DealerService());
-  log.info("TEST 2 Model Data Service up");
+  log.info("Petstore RestAPI Service up");
   return Promise.resolve();
 }
 
-module.exports = { bootstrap: bootstrap(), container, generateInstance };
+module.exports = {
+  bootstrap: bootstrap(),
+  container,
+  generateInstance
+};

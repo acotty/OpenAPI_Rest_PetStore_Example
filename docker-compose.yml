@@ -14,14 +14,14 @@ services:
     container_name: mongo
     restart: unless-stopped
     volumes:
-      - /data/db
+      - ./volumes/mongodb:/data/db
     ports:
       - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password    
     networks:
-      - test-network
+      - petstore-network
     logging: *default-logging      
 
   mariadb:
@@ -31,38 +31,80 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ChangeMe
+      MYSQL_ROOT_HOST: "%"
       MYSQL_USER: test
       MYSQL_PASSWORD: password
-      MYSQL_DATABASE: test
+      MYSQL_DATABASE: hydra
+    healthcheck:
+      test: "mysqladmin ping -u root -p$${MYSQL_ROOT_PASSWORD}"
+      start_period: 10s
+      timeout: 20s
+      retries: 10
     volumes:
       - ./volumes/mariadb-data:/var/lib/mysql
     ports:
-      - 8022:3306
+      - 3306:3306
     networks:
-      - test-network
+      - petstore-network
     logging: *default-logging      
 
-  Ory_Hydra:
-    image: oryd/hydra:v1.10.1-alpine
-    hostname: Ory_Hydra
-    container_name: Ory_Hydra
-    restart: unless-stopped
-    links:
-      - mariadb
+  mysql:
+    image: mysql:8.0.23
+    container_name: mysql
     environment:
-      LOG_LEVEL: debug
-      URLS_SELF_ISSUER: https://localhost:9000
-      URLS_CONSENT: http://localhost:9020/consent
-      URLS_LOGIN: http://localhost:9020/login
-      SECRETS_SYSTEM: "this_needs_to_be_the_same_always_and_also_very_s3cuR3"
-      # - DSN=$DSN
+      MYSQL_ROOT_PASSWORD: ChangeMe
+      # MYSQL_ROOT_HOST: "%"
+      #MYSQL_USER: test
+      #MYSQL_PASSWORD: password
+      #MYSQL_DATABASE: keycloak
+      #mysql script:  see MySQL_Setup_Script.sql file
+    healthcheck:
+      test: "mysqladmin ping -u root -p$${MYSQL_ROOT_PASSWORD}"
+      start_period: 10s
+      timeout: 20s
+      retries: 10
+    volumes:
+        - C:/docker/volumes/mysql-data:/var/lib/mysql
     ports:
-      - 9200:4444
-      - 9201:4445
+      - 3306:3306
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE
     networks:
-      - test-network
+      - petstore-network
     logging: *default-logging      
+    
+  postgresd:
+    image: postgres:13
+    hostname: postgresd
+    container_name: postgresd
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=hydra
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=hydra
+    volumes:
+      - ./volumes/postgressql:/var/lib/postgresql/data
+    ports:
+        - 5432:5432
+    networks:
+      - petstore-network
+    logging: *default-logging      
+    
   
+  adminer:
+    image: adminer
+    hostname: adminer
+    container_name: adminer
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+      # - mysql
+    ports:
+      - 8081:8080    
+    networks:
+      - petstore-network
+    logging: *default-logging      
+    
   portainer:
     image: portainer/portainer-ce:2.1.1-alpine
     hostname: portainer
@@ -73,22 +115,21 @@ services:
       # Linux container under linux:
         #- /var/run/docker.sock:/var/run/docker.sock
         #- ~/code/DataPersistent/portainer_data:/data
-      
       # Linux container under windows:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./portainer_data:/data
+      - ./volumes/portainer_data:/data
       #- D:\Temp:/data
-      
       # Windows container:
       # Windows container:
         #- \\.\pipe\docker_engine:\\.\pipe\docker_engine
         #-C:\ProgramData\Portainer:C:\data 
-
     ports:
       - 8000:8000
       - 9000:9000
+    networks:
+      - petstore-network
     logging: *default-logging      
-
+  
   rest-service:
     hostname: rest-service
     container_name: rest-service
@@ -110,46 +151,226 @@ services:
     #   # Install node-sass to get the host specific bindings.  OSX and linux are different
     #   - yarn start
     networks:
-      - test-network
+      - petstore-network
     logging: *default-logging      
 
+  wso2am-analytics-worker:
+    image: wso2/wso2am-analytics-worker:3.2.0-alpine
+    hostname: wso2am-analytics-worker
+    container_name: wso2am-analytics-worker
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nc", "-z","localhost", "9091"]
+      interval: 10s
+      start_period: 20s
+      retries: 10
+    depends_on:
+#      mysql:
+      mariadb:
+        condition: service_healthy
+    volumes:
+      - ./volumes/wso2am-analytics/home/wso2carbon/wso2-config-volume
+    ports:
+      - 9091:9091
+      - 9444:9444
+    networks:
+      - petstore-network
+    logging: *default-logging      
+  
+  wso2is-as-km:
+    image: wso2/wso2is-km:5.10.0
+    hostname: wso2is-as-km
+    container_name: wso2is-as-km
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-k", "-f", "https://localhost:9443/carbon/admin/login.jsp"]
+      interval: 120s
+      timeout: 300s
+      start_period: 300s
+      retries: 30
+    depends_on:
+      #mysql:
+      mariadb:
+        condition: service_healthy
+      wso2am-analytics-worker:
+        condition: service_healthy
+    volumes:
+      - ./volumes/wso2is-as-km:/home/wso2carbon/wso2-config-volume
+    ports:
+      - 9765:9763
+      - 9445:9443
+    networks:
+      - petstore-network
+    logging: *default-logging      
+  
+  wso2api-manager:
+    image: wso2/wso2am:3.2.0-alpine
+    hostname: wso2api-manager
+    container_name: wso2api-manager
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nc", "-z","localhost", "9443"]
+      interval: 10s
+      start_period: 180s
+      retries: 20
+    depends_on:
+      #mysql:
+      mariadb:
+        condition: service_healthy
+      wso2am-analytics-worker:
+        condition: service_healthy
+      wso2is-as-km:
+        condition: service_healthy
+    volumes:
+      # in deployment.toml "useSSL=false&amp;allowPublicKeyRetrieval=true&amp;connectTimeout=30000" to mariadb URL
+      - ./volumes/wso2api-manager/repository/conf/deployment.toml:/home/wso2carbon/wso2am-3.2.0/repository/conf/deployment.toml
+      #
+      #install https://mariadb.com/kb/en/mariadb-connector-j-272-release-notes/ into lib volume:
+      - ./volumes/wso2api-manager/repository/components/lib/:/home/wso2carbon/wso2am-3.2.0/repository/components/lib/
+      #
+      # Still to configure user_store
+      #https://apim.docs.wso2.com/en/latest/administer/managing-users-and-roles/managing-user-stores/configure-primary-user-store/configuring-a-jdbc-user-store/
+    ports:
+      - 9763:9763
+      - 9443:9443
+      - 8280:8280
+      - 8243:8243
+    networks:
+      - petstore-network
+    logging: *default-logging      
 
+  wso2am-analytics-dashboard:
+    image: wso2/wso2am-analytics-dashboard:3.2.0-alpine
+    hostname: wso2am-analytics-dashboard
+    container_name: wso2am-analytics-dashboard
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nc", "-z","localhost", "9643"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+    depends_on:
+      #mysql:
+      mariadb:
+        condition: service_healthy
+      wso2api-manager:
+        condition: service_healthy
+    volumes:
+      - ./volumes/wso2am-analytics-dashboard/config:/home/wso2carbon/wso2-config-volume
+      - ./volumes/wso2am-analytics-dashboard/artifact:/home/wso2carbon/wso2-artifact-volume      
+    ports:
+      - 9643:9643
+    networks:
+      - petstore-network
+    logging: *default-logging      
+  
+# --------------------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------------------
+# NodeJS app example and app/user configuration:
+#  https://medium.com/@wathsara/setting-up-node-oauth-applications-with-wso2-identity-server-1d13cb1650f0
+# --------------------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------------------
+# WSO2 URLS:
+#   Working:
+#             WSO2 identity Server  Admin Portal: https://localhost:9445/carbon/admin/login.jsp
+#             WSO2 APIM Admin Portal: https://localhost:9443/admin
+#             WSO2 API Manager: https://localhost:9443/publisher/apis
+#
+# CarbonUIServiceComponent Mgt Console URL  : https://localhost:9443/carbon/
+# CarbonUIServiceComponent API Developer Portal Default Context : https://localhost:9443/devportal
+# CarbonUIServiceComponent API Publisher Default Context : https://localhost:9443/publisher
+#
+#
+# https://docs.wso2.com/display/AM220/Edit+and+Consume+APIs+using+Swagger+Tools
+# https://medium.com/@tgtshanika/open-api-3-0-support-in-wso2-api-manager-dc828502cb07
+
+# See x-auth-type: WSO2-specific object to define the authentication type of the method :
+# https://docs.wso2.com/display/AM260/Edit+and+Consume+APIs+using+Swagger+Tools
+# -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - -
+#
+# NOT WORKING
+#    User Portal: https://localhost:9445/myaccount
+#    Analytics https://localhost:9444/carbon
+# --------------------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------------------
+
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    hostname: keycloak
+    container_name: keycloak
+    restart: unless-stopped
+    depends_on:
+      mysql:
+      #mariadb:
+        condition: service_healthy
+    environment:
+      # mariadb fails!!!!
+      #DB_VENDOR: mariadb
+      #DB_ADDR: mariadb
+      DB_VENDOR: mysql
+      DB_ADDR: mysql
+      DB_PORT: 3306
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_HTTPS_PORT: 8443
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example,
+      #   and it shouldn't be used in production without knowledge. It is highly recommended that you read the 
+      #   MySQL JDBC driver documentation in order to use it.
+      JDBC_PARAMS: "useSSL=FALSE&allowPublicKeyRetrieval=TRUE&connectTimeout=60000"
+      JAVA_OPTS: "-Djboss.as.management.blocking.timeout=3600"
+    ports:
+      - 8080:8080
+      - 8443:8443
+      - 9990:9990      
+#    healthcheck:
+#      test: "curl -f http://localhost:8080/auth || exit 1"
+#      start_period: 10s
+    networks:
+      - petstore-network
+    logging: *default-logging      
+#
+##
+# http://localhost:8080/auth/admin/master/console
+#
+# To setup MYSQL/MARIAD run the ./DB_Setup/MySQL_Keycloak_Setup_Script.sql script 
+#    The script creates the 'keycloak' dataabse and the kuser & keycloak users 
+
+# https://github.com/keycloak/keycloak-nodejs-connect
+# https://github.com/keycloak/keycloak-nodejs-admin-client
+# https://github.com/ccouzens/keycloak-openapi/blob/main/example_app/src/index.ts
+# https://www.keycloak.org/docs/latest/securing_apps/index.html#_nodejs_adapter
+#
+# Very good example app:
+# https://github.com/v-ladynev/keycloak-nodejs-example
+#
+    
 networks:
-  test-network:
-   name: docker-models-network
+  petstore-network:
+   name: docker-petstore-network
+
 
 # ------------------------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------------------
 # DOCKER WINDOWS PORT BINDING ERROR
-
-# ERROR: for mariadb  Cannot start service mariadb: 
+# =====================================
+# ERROR: 
+# ------  
 #     Ports are not available: listen tcp 0.0.0.0:8022: 
 #     bind: An attempt was made to access a socket in a way forbidden by its access permissions
 #
-#
-# C:\WINDOWS\system32>netsh interface ipv4 show excludedportrange protocol=tcp
-# 
-# Protocol tcp Port Exclusion Ranges
-# 
-# Start Port    End Port
-# ----------    --------  
-#      49687       49786  
-#      49838       49838     *  
-#      49839       49938  
-#      49939       50038  
-#      50039       50138  
-#      50139       50238  
-# * - Administered port exclusions.
-# 
-# 
-# https://github.com/docker/for-win/issues/3171
-# http://revertservice.com/10/winnat/
-# 
-# 
 # SOLUTION:
-# ========
-# from admin command prompt:
-# net stop winnat
-# sc config WinNat start= demand
+# ---------
+# from admin command prompt run the following two commands:
+# sc stop winnat
+#
+# Notes:
+# sc qc winnat
+# sc query winnat
+# "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+# DO NOT "sc config WinNat start=demand" as docker will crash on startup!!!
 # ------------------------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------------------

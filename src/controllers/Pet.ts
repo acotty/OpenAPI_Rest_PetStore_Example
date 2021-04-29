@@ -246,6 +246,31 @@ export class PetController {
     });
   }
 */
+
+
+  public findPetsByStatus(status: string, responder) {
+    const FakePet = {
+      id: 1,
+      name: "Fake pet",
+      category: "category",
+      photoUrls: ["none"],
+      tags: ["none"],
+      status: status
+    };
+
+    return responder.success(
+      [FakePet]
+    );
+  }
+
+  public async  deletePet(petId: number, responder) {
+
+    return responder.success( {
+      type: petId.toString(),
+      message: DELETE_SUCCESS_MESSAGE,
+    });
+  }
+
 }
 
 module.exports = PetController;

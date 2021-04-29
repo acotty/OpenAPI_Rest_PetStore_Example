@@ -1,4 +1,4 @@
-import { getRepository } from "typeorm";
+// import { getRepository } from "typeorm";
 
 export class StoreController {
 }

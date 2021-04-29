@@ -1,7 +1,7 @@
-const base64url = require("base64-url");
+import base64url from "base64-url";
 
 export class EncodingUtil {
-  public static decodeUriWithBase64(str: string): string {
+   public decodeUriWithBase64(str: string): string {
     try {
       return base64url.decode(str);
     } catch (err) {
@@ -10,8 +10,9 @@ export class EncodingUtil {
 
   }
 
-  public static encodeUriWithBase64(uri: string): string {
+  public encodeUriWithBase64(uri: string): string {
     const encodedUri = base64url.encode(uri);
     return encodedUri;
   }
+
 }

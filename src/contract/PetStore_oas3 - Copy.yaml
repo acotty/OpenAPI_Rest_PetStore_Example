@@ -31,9 +31,9 @@ tags:
 
 # Apply the following to all of the API's. Add additional security acess to this on a single API basis
 security:
-#  - api_key: []
-  - petstoreAuthorise:
-      - read:pets
+  - api_key: []
+  - petstore_auth:
+      - 'read:pets'
 
 paths:
   /pet:
@@ -45,13 +45,16 @@ paths:
       description: Add a new pet to the store
       operationId: addPet
       security:
-        - petstoreAuthorise:
+        - petstore_auth:
             - 'write:pets'
       requestBody:
         description: Create a new pet in the store
         required: true
         content:
           application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+          application/xml:
             schema:
               $ref: '#/components/schemas/Pet'
           application/x-www-form-urlencoded:
@@ -62,10 +65,10 @@ paths:
           description: Successful operation
           x-gulp-swagger-codegen-outcome: success
           content:
-            application/json:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/Pet'
-            application/x-www-form-urlencoded:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
         '405':
@@ -79,13 +82,16 @@ paths:
       description: Update an existing pet by Id
       operationId: updatePet
       security:
-        - petstoreAuthorise:
-            - write:pets
+        - petstore_auth:
+            - 'write:pets'
       requestBody:
         description: Update an existent pet in the store
         required: true
         content:
           application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+          application/xml:
             schema:
               $ref: '#/components/schemas/Pet'
           application/x-www-form-urlencoded:
@@ -96,10 +102,10 @@ paths:
           description: Successful operation
           x-gulp-swagger-codegen-outcome: success
           content:
-            application/json:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/Pet'
-            application/x-www-form-urlencoded:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
         '400':
@@ -139,12 +145,12 @@ paths:
           description: successful operation
           x-gulp-swagger-codegen-outcome: success
           content:
-            application/json:
+            application/xml:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Pet'
-            application/x-www-form-urlencoded:
+            application/json:
               schema:
                 type: array
                 items:
@@ -179,12 +185,12 @@ paths:
           description: successful operation
           x-gulp-swagger-codegen-outcome: success
           content:
-            application/json:
+            application/xml:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Pet'
-            application/x-www-form-urlencoded:
+            application/json:
               schema:
                 type: array
                 items:
@@ -215,10 +221,10 @@ paths:
           description: successful operation
           x-gulp-swagger-codegen-outcome: success
           content:
-            application/json:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/Pet'
-            application/x-www-form-urlencoded:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
         '400':
@@ -235,8 +241,8 @@ paths:
       description: ''
       operationId: updatePetWithForm
       security:
-        - petstoreAuthorise:
-            - write:pets
+        - petstore_auth:
+            - 'write:pets'
       parameters:
         - name: petId
           in: path
@@ -267,8 +273,8 @@ paths:
       description: ''
       operationId: deletePet
       security:
-        - petstoreAuthorise:
-            - write:pets
+        - petstore_auth:
+            - 'write:pets'
       parameters:
         - name: petId
           in: path
@@ -285,9 +291,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-            application/x-www-form-urlencoded:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
         '400':
           description: Invalid pet value
           x-gulp-swagger-codegen-outcome: badRequestError
@@ -301,8 +304,8 @@ paths:
       description: ''
       operationId: uploadFile
       security:
-        - petstoreAuthorise:
-            - write:pets
+        - petstore_auth:
+            - 'write:pets'
       parameters:
         - name: petId
           in: path
@@ -319,11 +322,7 @@ paths:
             type: string
       requestBody:
         content:
-          application/json:
-            schema:
-              type: string
-              format: binary
-          application/x-www-form-urlencoded:
+          application/octet-stream:
             schema:
               type: string
               format: binary
@@ -333,9 +332,6 @@ paths:
           x-gulp-swagger-codegen-outcome: success
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-            application/x-www-form-urlencoded:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
@@ -359,12 +355,6 @@ paths:
                 additionalProperties:
                   type: integer
                   format: int32
-            application/x-www-form-urlencoded:
-              schema:
-                type: object
-                additionalProperties:
-                  type: integer
-                  format: int32
 
   /store/order:
     x-exegesis-controller: Store
@@ -375,11 +365,14 @@ paths:
       description: Place a new order in the store
       operationId: placeOrder
       security:
-        - petstoreAuthorise:
-            - write:pets
+        - petstore_auth:
+            - 'write:pets'
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+          application/xml:
             schema:
               $ref: '#/components/schemas/Order'
           application/x-www-form-urlencoded:
@@ -391,9 +384,6 @@ paths:
           x-gulp-swagger-codegen-outcome: success
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/Order'
-            application/x-www-form-urlencoded:
               schema:
                 $ref: '#/components/schemas/Order'
         '405':
@@ -424,10 +414,10 @@ paths:
           description: successful operation
           x-gulp-swagger-codegen-outcome: success
           content:
-            application/json:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/Order'
-            application/x-www-form-urlencoded:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Order'
         '400':
@@ -446,8 +436,8 @@ paths:
         1000 or nonintegers will generate API errors
       operationId: deleteOrder
       security:
-        - petstoreAuthorise:
-            - write:pets
+        - petstore_auth:
+            - 'write:pets'
       parameters:
         - name: orderId
           in: path
@@ -473,11 +463,14 @@ paths:
       description: This can only be done by the logged in user.
       operationId: createUser
       security:
-        - petstoreAuthorise:
-            - write:pets
+        - petstore_auth:
+            - 'write:pets'
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
             schema:
               $ref: '#/components/schemas/User'
           application/x-www-form-urlencoded:
@@ -492,7 +485,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-            application/x-www-form-urlencoded:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/User'
 
@@ -505,16 +498,11 @@ paths:
       description: 'Creates list of users with given input array'
       operationId: createUsersWithListInput
       security:
-        - petstoreAuthorise:
-            - write:pets
+        - petstore_auth:
+            - 'write:pets'
       requestBody:
         content:
           application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
             schema:
               type: array
               items:
@@ -524,10 +512,10 @@ paths:
           description: Successful operation
           x-gulp-swagger-codegen-outcome: success
           content:
-            application/json:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/User'
-            application/x-www-form-urlencoded:
+            application/json:
               schema:
                 $ref: '#/components/schemas/User'
         default:
@@ -571,10 +559,10 @@ paths:
                 type: string
                 format: date-time
           content:
-            application/json:
+            application/xml:
               schema:
                 type: string
-            application/x-www-form-urlencoded:
+            application/json:
               schema:
                 type: string
         '400':
@@ -605,8 +593,8 @@ paths:
       description: ''
       operationId: getUserByName
       security:
-        - petstoreAuthorise:
-            - admin:pets
+        - petstore_auth:
+            - 'admin:pets'
       parameters:
         - name: username
           in: path
@@ -619,10 +607,10 @@ paths:
           description: successful operation
           x-gulp-swagger-codegen-outcome: success
           content:
-            application/json:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/User'
-            application/x-www-form-urlencoded:
+            application/json:
               schema:
                 $ref: '#/components/schemas/User'
         '400':
@@ -639,9 +627,9 @@ paths:
       description: This can only be done by the logged in user.
       operationId: updateUser
       security:
-        - petstoreAuthorise:
-            - write:pets
-            - admin:pets
+        - petstore_auth:
+            - 'write:pets'
+            - 'admin:pets'
       parameters:
         - name: username
           in: path
@@ -653,6 +641,9 @@ paths:
         description: Update an existent user in the store
         content:
           application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
             schema:
               $ref: '#/components/schemas/User'
           application/x-www-form-urlencoded:
@@ -670,9 +661,9 @@ paths:
       description: This can only be done by the logged in user.
       operationId: deleteUser
       security:
-        - petstoreAuthorise:
-            - write:pets
-            - admin:pets
+        - petstore_auth:
+            - 'write:pets'
+            - 'admin:pets'
       parameters:
         - name: username
           in: path
@@ -697,13 +688,16 @@ paths:
       description: Add a new address to the store
       operationId: addAddress
       security:
-        - petstoreAuthorise:
-            - write:pets
+        - petstore_auth:
+            - 'write:pets'
       requestBody:
         description: Create a new address in the store
         required: true
         content:
           application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/xml:
             schema:
               $ref: '#/components/schemas/Address'
           application/x-www-form-urlencoded:
@@ -714,10 +708,10 @@ paths:
           description: Successful operation
           x-gulp-swagger-codegen-outcome: success
           content:
-            application/json:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/Address'
-            application/x-www-form-urlencoded:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Address'
         '405':
@@ -731,13 +725,16 @@ paths:
       description: Update an existing address by addressId
       operationId: updateAddress
       security:
-        - petstoreAuthorise:
-            - write:pets
+        - petstore_auth:
+            - 'write:pets'
       requestBody:
         description: Update an existing address in the store
         required: true
         content:
           application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+          application/xml:
             schema:
               $ref: '#/components/schemas/Address'
           application/x-www-form-urlencoded:
@@ -748,10 +745,10 @@ paths:
           description: Successful operation
           x-gulp-swagger-codegen-outcome: success
           content:
-            application/json:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/Address'
-            application/x-www-form-urlencoded:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Address'
         '400':
@@ -786,10 +783,10 @@ paths:
           description: successful operation
           x-gulp-swagger-codegen-outcome: success
           content:
-            application/json:
+            application/xml:
               schema:
                 $ref: '#/components/schemas/Address'
-            application/x-www-form-urlencoded:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Address'
         '400':
@@ -806,8 +803,8 @@ paths:
       description: 'Deletes an address in the store'
       operationId: deleteAddress
       security:
-        - petstoreAuthorise:
-            - write:pets
+        - petstore_auth:
+            - 'write:pets'
       parameters:
         - name: addressId
           in: path
@@ -851,7 +848,7 @@ components:
             - placed
             - approved
             - delivered
-          example: 'approved'
+          example: approved
         complete:
           type: boolean
       xml:
@@ -865,7 +862,7 @@ components:
           example: 100000
         username:
           type: string
-          example: 'fehguy'
+          example: fehguy
         address:
           type: array
           items:
@@ -880,16 +877,16 @@ components:
       properties:
         street:
           type: string
-          example: '437 Lytton'
+          example: 437 Lytton
         city:
           type: string
-          example: 'Palo Alto'
+          example: Palo Alto
         state:
           type: string
-          example: 'CA'
+          example: CA
         zip:
           type: string
-          example: '94301'
+          example: 94301
       xml:
         name: address
       type: object
@@ -901,7 +898,7 @@ components:
           example: 1
         name:
           type: string
-          example: 'Dogs'
+          example: Dogs
       xml:
         name: category
       type: object
@@ -913,22 +910,22 @@ components:
           example: 10
         username:
           type: string
-          example: 'theUser'
+          example: theUser
         firstName:
           type: string
-          example: 'John'
+          example: John
         lastName:
           type: string
-          example: 'James'
+          example: James
         email:
           type: string
-          example: 'john@email.com'
+          example: john@email.com
         password:
           type: string
-          example: '12345'
+          example: 12345
         phone:
           type: string
-          example: '12345'
+          example: 12345
         userStatus:
           type: integer
           format: int32
@@ -958,7 +955,7 @@ components:
           example: 10
         name:
           type: string
-          example: 'doggie'
+          example: doggie
         category:
           $ref: '#/components/schemas/Category'
         photoUrls:
@@ -1005,7 +1002,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Pet'
-        application/x-www-form-urlencoded:
+        application/xml:
           schema:
             $ref: '#/components/schemas/Pet'
       description: Pet object that needs to be added to the store
@@ -1016,26 +1013,20 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/User'
-        application/x-www-form-urlencoded:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
       description: List of user object
   securitySchemes:
-    petstoreAuthorise:
+    petstore_auth:
       type: oauth2
       flows:
         #implicit:
-        #authorizationCode:
-        password:
-          # authorizationUrl: 'https://localhost:9443/oauth2/authorize'
+        authorizationCode:
+          authorizationUrl: 'https://localhost:9443/oauth2/authorize'
           tokenUrl: 'http://localhost:9443/oauth2/token'
           scopes:
-            write:pets: Grant wite access 
-            read:pets: Grant read access 
-            admin:pets: Grants admin access to admin operations
-#    api_key:
-#      type: apiKey
-#      name: api_key
-#      in: header
+            'write:pets':  Grant wite access 
+            'read:pets':   Grant read access 
+            'admin:pets':  Grants admin access to admin operations
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
