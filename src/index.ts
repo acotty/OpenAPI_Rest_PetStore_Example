@@ -10,7 +10,6 @@ import * as winston from "winston";
 import { createConnection } from "typeorm";
 import * as stringify from "json-stringify-safe";
 
-
 import customServiceContract from "./contract/contract";
 import Address from "./models/Address";
 import Category from "./models/Category";
@@ -123,16 +122,6 @@ function afterSwaggerTest() {
   };
 }
 
-// Middleware to run after filtering, but immediately before the controller
-function beforeControllerTest() {
-  return (err, req, res, next) => {
-      console.log(`Called beforeControllerTest()`);
-      console.log(`err : ${stringify(err, null, 4)}\n`);
-      //console.log(`req : ${stringify(req, null, 4)}\n`);
-      next();
-  };
-}
-
 // Middleware to run if the request has not been processed, so return 404
 function errorReqestNotProcessed404() {
   return (req, res) => {
@@ -189,13 +178,10 @@ const generateInstance = () => skeleton({
       cookieParser(),   // for a Keycloak token
       bodyParser(),
     ],
-    beforeController: [
-      // beforeControllerTest()
-    ],
     afterSwagger: [
       // afterSwaggerTest()
     ],
-    errorProcessing: [
+    errorProcessingNoRoute: [
       // errorReqestNotProcessed404()
     ],
   },
