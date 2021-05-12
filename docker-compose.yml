@@ -58,6 +58,9 @@ services:
       #MYSQL_PASSWORD: password
       #MYSQL_DATABASE: keycloak
       #mysql script:  see MySQL_Setup_Script.sql file
+      MYSQL_USER: keycloak
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: keycloak
     healthcheck:
       test: "mysqladmin ping -u root -p$${MYSQL_ROOT_PASSWORD}"
       start_period: 10s
@@ -154,147 +157,6 @@ services:
       - petstore-network
     logging: *default-logging      
 
-  wso2am-analytics-worker:
-    image: wso2/wso2am-analytics-worker:3.2.0-alpine
-    hostname: wso2am-analytics-worker
-    container_name: wso2am-analytics-worker
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "nc", "-z","localhost", "9091"]
-      interval: 10s
-      start_period: 20s
-      retries: 10
-    depends_on:
-#      mysql:
-      mariadb:
-        condition: service_healthy
-    volumes:
-      - ./volumes/wso2am-analytics/home/wso2carbon/wso2-config-volume
-    ports:
-      - 9091:9091
-      - 9444:9444
-    networks:
-      - petstore-network
-    logging: *default-logging      
-  
-  wso2is-as-km:
-    image: wso2/wso2is-km:5.10.0
-    hostname: wso2is-as-km
-    container_name: wso2is-as-km
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-k", "-f", "https://localhost:9443/carbon/admin/login.jsp"]
-      interval: 120s
-      timeout: 300s
-      start_period: 300s
-      retries: 30
-    depends_on:
-      #mysql:
-      mariadb:
-        condition: service_healthy
-      wso2am-analytics-worker:
-        condition: service_healthy
-    volumes:
-      - ./volumes/wso2is-as-km:/home/wso2carbon/wso2-config-volume
-    ports:
-      - 9765:9763
-      - 9445:9443
-    networks:
-      - petstore-network
-    logging: *default-logging      
-  
-  wso2api-manager:
-    image: wso2/wso2am:3.2.0-alpine
-    hostname: wso2api-manager
-    container_name: wso2api-manager
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "nc", "-z","localhost", "9443"]
-      interval: 10s
-      start_period: 180s
-      retries: 20
-    depends_on:
-      #mysql:
-      mariadb:
-        condition: service_healthy
-      wso2am-analytics-worker:
-        condition: service_healthy
-      wso2is-as-km:
-        condition: service_healthy
-    volumes:
-      # in deployment.toml "useSSL=false&amp;allowPublicKeyRetrieval=true&amp;connectTimeout=30000" to mariadb URL
-      - ./volumes/wso2api-manager/repository/conf/deployment.toml:/home/wso2carbon/wso2am-3.2.0/repository/conf/deployment.toml
-      #
-      #install https://mariadb.com/kb/en/mariadb-connector-j-272-release-notes/ into lib volume:
-      - ./volumes/wso2api-manager/repository/components/lib/:/home/wso2carbon/wso2am-3.2.0/repository/components/lib/
-      #
-      # Still to configure user_store
-      #https://apim.docs.wso2.com/en/latest/administer/managing-users-and-roles/managing-user-stores/configure-primary-user-store/configuring-a-jdbc-user-store/
-    ports:
-      - 9763:9763
-      - 9443:9443
-      - 8280:8280
-      - 8243:8243
-    networks:
-      - petstore-network
-    logging: *default-logging      
-
-  wso2am-analytics-dashboard:
-    image: wso2/wso2am-analytics-dashboard:3.2.0-alpine
-    hostname: wso2am-analytics-dashboard
-    container_name: wso2am-analytics-dashboard
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "nc", "-z","localhost", "9643"]
-      interval: 10s
-      retries: 5
-      start_period: 20s
-    depends_on:
-      #mysql:
-      mariadb:
-        condition: service_healthy
-      wso2api-manager:
-        condition: service_healthy
-    volumes:
-      - ./volumes/wso2am-analytics-dashboard/config:/home/wso2carbon/wso2-config-volume
-      - ./volumes/wso2am-analytics-dashboard/artifact:/home/wso2carbon/wso2-artifact-volume      
-    ports:
-      - 9643:9643
-    networks:
-      - petstore-network
-    logging: *default-logging      
-  
-# --------------------------------------------------------------------------------------------------------------------------------
-# --------------------------------------------------------------------------------------------------------------------------------
-# NodeJS app example and app/user configuration:
-#  https://medium.com/@wathsara/setting-up-node-oauth-applications-with-wso2-identity-server-1d13cb1650f0
-# --------------------------------------------------------------------------------------------------------------------------------
-# --------------------------------------------------------------------------------------------------------------------------------
-# WSO2 URLS:
-#   Working:
-#             WSO2 identity Server  Admin Portal: https://localhost:9445/carbon/admin/login.jsp
-#             WSO2 APIM Admin Portal: https://localhost:9443/admin
-#             WSO2 API Manager: https://localhost:9443/publisher/apis
-#
-# CarbonUIServiceComponent Mgt Console URL  : https://localhost:9443/carbon/
-# CarbonUIServiceComponent API Developer Portal Default Context : https://localhost:9443/devportal
-# CarbonUIServiceComponent API Publisher Default Context : https://localhost:9443/publisher
-#
-#
-# https://docs.wso2.com/display/AM220/Edit+and+Consume+APIs+using+Swagger+Tools
-# https://medium.com/@tgtshanika/open-api-3-0-support-in-wso2-api-manager-dc828502cb07
-
-# See x-auth-type: WSO2-specific object to define the authentication type of the method :
-# https://docs.wso2.com/display/AM260/Edit+and+Consume+APIs+using+Swagger+Tools
-# -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  - -
-#
-# NOT WORKING
-#    User Portal: https://localhost:9445/myaccount
-#    Analytics https://localhost:9444/carbon
-# --------------------------------------------------------------------------------------------------------------------------------
-# --------------------------------------------------------------------------------------------------------------------------------
-
-
   keycloak:
     image: quay.io/keycloak/keycloak:latest
     hostname: keycloak
@@ -322,37 +184,48 @@ services:
       #   MySQL JDBC driver documentation in order to use it.
       JDBC_PARAMS: "useSSL=FALSE&allowPublicKeyRetrieval=TRUE&connectTimeout=60000"
       JAVA_OPTS: "-Djboss.as.management.blocking.timeout=3600"
+      #------------------------------------------------------------------------------------------------------------
+      # Export Realm, see https://hub.docker.com/r/jboss/keycloak/
+      #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+      # Import Realm, see https://hub.docker.com/r/jboss/keycloak/
+      # KEYCLOAK_IMPORT: /config/nodejs-test-realm.json 
+      #------------------------------------------------------------------------------------------------------------
+    # command:
+    #   # see https://stackoverflow.com/questions/61184888/how-to-import-multiple-realm-in-keycloak
+    #   - "-b 0.0.0.0"
+    #   - "-Dkeycloak.migration.action=import"
+    #   - "-Dkeycloak.migration.provider=singleFile"
+    #   - "-Dkeycloak.migration.file=/config/nodejs-test-realm.json"
+    #   - "-Dkeycloak.migration.strategy=IGNORE_EXISTING"
+    # volumes:
+    #   - ./test/fixtures/auth-utils/nodejs-test-realm.json:/config/nodejs-test-realm.json 
     ports:
       - 8080:8080
       - 8443:8443
       - 9990:9990      
-#    healthcheck:
-#      test: "curl -f http://localhost:8080/auth || exit 1"
-#      start_period: 10s
+    healthcheck:
+      test: "curl -f http://localhost:8080/auth || exit 1"
+      start_period: 10s
     networks:
       - petstore-network
     logging: *default-logging      
-#
-##
-# http://localhost:8080/auth/admin/master/console
-#
-# To setup MYSQL/MARIAD run the ./DB_Setup/MySQL_Keycloak_Setup_Script.sql script 
-#    The script creates the 'keycloak' dataabse and the kuser & keycloak users 
 
-# https://github.com/keycloak/keycloak-nodejs-connect
-# https://github.com/keycloak/keycloak-nodejs-admin-client
-# https://github.com/ccouzens/keycloak-openapi/blob/main/example_app/src/index.ts
-# https://www.keycloak.org/docs/latest/securing_apps/index.html#_nodejs_adapter
-#
-# Very good example app:
-# https://github.com/v-ladynev/keycloak-nodejs-example
-#
-    
 networks:
   petstore-network:
    name: docker-petstore-network
 
 
+# ------------------------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------------
+# http://localhost:8080/auth/admin/master/console
+#
+# https://github.com/keycloak/keycloak-nodejs-connect
+# https://github.com/keycloak/keycloak-nodejs-admin-client
+# https://www.keycloak.org/docs/latest/securing_apps/index.html#_nodejs_adapter
+#
+# Very good example app:
+# https://github.com/v-ladynev/keycloak-nodejs-example
+#
 # ------------------------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------------------------------
 # DOCKER WINDOWS PORT BINDING ERROR

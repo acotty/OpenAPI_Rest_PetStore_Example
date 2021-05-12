@@ -7,11 +7,6 @@ USERNAME := $(shell whoami)
 
 UP=docker-compose up -d
 
-migrate:
-	docker stop hydra-migrate
-	docker rm hydra-migrate
-	$(UP) hydra-migrate
-
 services:
 	$(UP) mongo mariadb postgresd
 	$(UP) rest-service
@@ -31,11 +26,6 @@ up:
 	$(UP) portainer mysql
 	sleep 10
 	$(UP) keycloak
-
-up2:
-	$(UP) portainer mariadb
-	$(UP) wso2am-analytics-worker wso2is-as-km wso2api-manager wso2am-analytics-dashboard
-	$(UP) adminer 
 
 service:
 	sleep 5

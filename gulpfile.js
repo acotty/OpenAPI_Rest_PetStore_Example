@@ -3,19 +3,13 @@
 
 "use strict";
 
-const eslint = require("@zebrajaeger/gulp-eslint");
-const esdoc = require("gulp-esdoc");
+// const esdoc = require("esdoc2");
 const gulp = require("gulp");
-const ts = require("gulp-typescript");
-// const sourcemaps = require('gulp-sourcemaps');
-const tsProject = ts.createProject("tsconfig.json");
 const fs = require("fs");
 const rmdir = require("rmdir");
 
-const serverSrcrDir  =  "./src";
 const tempDir = ".temp";
 const distDir = "dist";
-const distServerSrcDir  =  distDir + "/src";
 const distTestDir = distDir + "/test";
 const coverageDir = "./coverage";
 const nycOutputDir = "./.nyc_output";
@@ -107,55 +101,7 @@ gulp.task("clean", () => {
   return Promise.resolve("Clean completed");
 });
 
-gulp.task("tsc", gulp.series("clean", () => {
-    return tsProject.src()
-        //.pipe(sourcemaps.init())
-        .pipe(tsProject())
-        //.pipe(sourcemaps.write('.', {includeContent: true, sourceRoot: '.'})) // Removed to get TS code coverage output working <WIP>
-        .pipe(gulp.dest(distServerSrcDir));
-}));
+// gulp.task("docs", () => {
+//   return esdoc();
+// });
 
-gulp.task("tscompile", () => {
-  console.log(`tsProject.src() : ${tsProject.src()}`);
-  console.log(`CldistServerSrcDirean  : ${distServerSrcDir}`);
-
-  return tsProject.src()
-    //.pipe(sourcemaps.init())
-    .pipe(tsProject())
-    //.js
-    //.pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: ''}))
-    .pipe(gulp.dest(distServerSrcDir));
-});
-
-gulp.task("copyOtherFiles", () => {
-    return gulp.src([`${serverSrcrDir}/**/*.*`, `${serverSrcrDir}/**/*.ts`])
-        .pipe(gulp.dest(distServerSrcDir));
-});
-
-gulp.task("docs", () => {
-    return gulp.src("./src/")
-    .pipe(esdoc({
-      destination: "./dist/documentation",
-      unexportIdentifier: true,
-      undocumentIdentifier: true,
-      test: {
-        type: "mocha",
-        source: "./test",
-      }
-    }));
-});
-
-gulp.task("lint", () => {
-  return gulp.src([`${serverSrcrDir}/**/*.ts`, "./test/**/*.ts"])
-    // eslint() attaches the lint output to the "eslint" property
-    // of the file object so it can be used by other modules.
-    .pipe(eslint())
-    // eslint.format() outputs the lint results to the console.
-    // Alternatively use eslint.formatEach() (see Docs).
-    .pipe(eslint.format())
-    // To have the process exit with an error code (1) on
-    // lint error, return the stream and pipe to failAfterError last.
-    .pipe(eslint.failAfterError());
-});
-
-gulp.task("default", gulp.series("tsc", "lint", "docs", "copyOtherFiles"));

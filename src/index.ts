@@ -4,7 +4,7 @@
 import bodyParser from "./bodyParser";
 import * as config from "config";
 import * as cookieParser from "cookie-parser";
-import * as skeleton from "swagger-service-skeleton";
+import * as skeleton from "openapi-service-skeleton";
 import * as somersault from "somersault";
 import * as winston from "winston";
 import { createConnection } from "typeorm";
@@ -101,21 +101,21 @@ createConnection({
 // });
 
 // Middleware to run after some essentials/setup
-// but before the swagger-router.
-function beforeSwaggerTest() {
+// but before the exegesis-express routes.
+function beforeOpenAPITest() {
   return (req, res, next) => {
-      console.log(`Called beforeSwaggerTest()`);
+      console.log(`Called beforeOpenAPITest()`);
       //console.log(`req : ${stringify(req, null, 4)}\n`);
       next();
   };
 }
 
-// Middleware to run after swagger-router, if the
-// request does not get handled by swagger (i.e.
+// Middleware to run after exegesis-express routes, if the
+// request does not get handled by exegesis-express (i.e.
 // custom error handling)
-function afterSwaggerTest() {
+function afterOpenAPITest() {
   return (err, req, res, next) => {
-      console.log(`Called afterSwaggerTest()`);
+      console.log(`Called afterOpenAPITest()`);
       console.log(`err : ${stringify(err, null, 4)}\n`);
       //console.log(`req : ${stringify(req, null, 4)}\n`);
       next();
@@ -173,16 +173,16 @@ const generateInstance = () => skeleton({
     origin: (origin, callback) => callback(null, origin),
   },
   customMiddleware: {
-    beforeSwagger: [
-      // beforeSwaggerTest(),
+    beforeOpenAPI: [
+      beforeOpenAPITest(),
       cookieParser(),   // for a Keycloak token
       bodyParser(),
     ],
-    afterSwagger: [
-      // afterSwaggerTest()
+    afterOpenAPI: [
+      afterOpenAPITest()
     ],
     errorProcessingNoRoute: [
-      // errorReqestNotProcessed404()
+      errorReqestNotProcessed404()
     ],
   },
   ioc: {
@@ -197,8 +197,8 @@ const generateInstance = () => skeleton({
   },
   service: {
     listenPort: config.get("api.listenPort"),
-    // swagger: serviceContract,
-    swagger: customServiceContract,
+    // openapi: serviceContract,
+    openapi: customServiceContract,
   },
   exegesisOptions: {
     authenticators: exegesisAuthenticator,

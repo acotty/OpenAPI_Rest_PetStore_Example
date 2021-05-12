@@ -1,5 +1,6 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 'use strict';
+
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 process.env.NODE_ENV = 'local';
 //process.env.NODE_ENV = 'production';
@@ -96,6 +97,7 @@ app.generateInstance()
       //console.log(`${key}: ${decoded}`);
       resultToken[key] = decoded;
     });
+
     console.log(`POSTMAN access_token: ${jToken.access_token}`);
     console.log(`POSTMAN header Authorization: 'Basic ${Buffer.from(KeyClockConfig.clientId + ':' + KeyClockConfig.credentials.secret).toString('base64')}`);
 

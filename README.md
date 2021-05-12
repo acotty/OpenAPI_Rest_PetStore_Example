@@ -44,7 +44,7 @@ This command will stop the running containers:
 2. yarn start
 ```
 
-### To access the service swagger Rest API UI
+### To access the service OpenAPI Rest API UI
 
 ```
 http://rest-service-test.local.test.com.au:10010/docs
@@ -89,8 +89,10 @@ covergae./index.html
 # Notes
 
 * Docker compose use container-names to make service resolution easier.  The side effect is you can't use compose scaling options
+* Controller file name must be lowercase!!!
 
 #### Trouble Shooting
 * 'There were no instances available for the specified service.' - try to restart 'make restart` then wait to try again
 * docker hyperkit CPU too high - wait (open to better suggestions)
+
 

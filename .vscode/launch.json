@@ -18,8 +18,8 @@
     {
       "type": "chrome",
       "request": "launch",
-      "name": "Launch Chrome Model Swagger Data Service",
-      "url": "http://gaming-service-model.local.max-test.com.au:10010/docs",
+      "name": "Launch Chrome OpenAPI local rest Service",
+      "url": "http://localhost:10010/docs",
       "webRoot": ".",
       "sourceMaps": true,
       "trace": true

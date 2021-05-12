@@ -10,14 +10,11 @@ info:
 
     Some useful links:
     - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
-    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+    - [The original source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
   version: 1.0.6-SNAPSHOT
   title: SwaggerPetstore-OpenAPI
-  termsOfService: 'http://swagger.io/terms/'
-  contact:
-    email: apiteam@swagger.io
   license:
-    name: Apache 2.0
+    name: Apache 2.0 for OpenAPI yaml file
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 
 tags:
@@ -37,7 +34,7 @@ security:
 
 paths:
   /pet:
-    x-exegesis-controller: Pet
+    x-exegesis-controller: pet
     post:
       tags:
         - pet
@@ -70,7 +67,7 @@ paths:
                 $ref: '#/components/schemas/Pet'
         '405':
           description: Invalid input
-          x-gulp-swagger-codegen-outcome: badInputError
+          x-gulp-openapi-code-generator-outcome: badInputError
 
     put:
       tags:
@@ -94,7 +91,7 @@ paths:
       responses:
         '200':
           description: Successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -104,16 +101,16 @@ paths:
                 $ref: '#/components/schemas/Pet'
         '400':
           description: Invalid ID supplied
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
         '404':
           description: Pet not found
-          x-gulp-swagger-codegen-outcome: notFoundError
+          x-gulp-openapi-code-generator-outcome: notFoundError
         '405':
           description: Validation exception
-          x-gulp-swagger-codegen-outcome: badInputError
+          x-gulp-openapi-code-generator-outcome: badInputError
 
   /pet/findByStatus:
-    x-exegesis-controller: Pet
+    x-exegesis-controller: pet
     get:
       tags:
         - pet
@@ -137,7 +134,7 @@ paths:
       responses:
         '200':
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -151,10 +148,10 @@ paths:
                   $ref: '#/components/schemas/Pet'
         '400':
           description: Invalid status value
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
 
   /pet/findByTags:
-    x-exegesis-controller: Pet
+    x-exegesis-controller: pet
     get:
       tags:
         - pet
@@ -177,7 +174,7 @@ paths:
       responses:
         '200':
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -191,10 +188,10 @@ paths:
                   $ref: '#/components/schemas/Pet'
         '400':
           description: Invalid tag value
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
 
   '/pet/{petId}':
-    x-exegesis-controller: Pet
+    x-exegesis-controller: pet
     get:
       tags:
         - pet
@@ -213,7 +210,7 @@ paths:
       responses:
         '200':
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -223,10 +220,10 @@ paths:
                 $ref: '#/components/schemas/Pet'
         '400':
           description: Invalid ID supplied
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
         '404':
           description: Pet not found
-          x-gulp-swagger-codegen-outcome: notFoundError
+          x-gulp-openapi-code-generator-outcome: notFoundError
 
     post:
       tags:
@@ -258,7 +255,7 @@ paths:
       responses:
         '405':
           description: Invalid input
-          x-gulp-swagger-codegen-outcome: badInputError
+          x-gulp-openapi-code-generator-outcome: badInputError
 
     delete:
       tags:
@@ -280,7 +277,7 @@ paths:
       responses:
         '200':
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -290,10 +287,10 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
           description: Invalid pet value
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
 
   '/pet/{petId}/uploadImage':
-    x-exegesis-controller: Pet
+    x-exegesis-controller: pet
     post:
       tags:
         - pet
@@ -330,7 +327,7 @@ paths:
       responses:
         '200':
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -340,7 +337,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
 
   /store/inventory:
-    x-exegesis-controller: Store
+    x-exegesis-controller: store
     get:
       tags:
         - store
@@ -351,7 +348,7 @@ paths:
       responses:
         '200':
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -367,7 +364,7 @@ paths:
                   format: int32
 
   /store/order:
-    x-exegesis-controller: Store
+    x-exegesis-controller: store
     post:
       tags:
         - store
@@ -388,7 +385,7 @@ paths:
       responses:
         '200':
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -398,10 +395,10 @@ paths:
                 $ref: '#/components/schemas/Order'
         '405':
           description: Invalid input
-          x-gulp-swagger-codegen-outcome: badInputError
+          x-gulp-openapi-code-generator-outcome: badInputError
 
   '/store/order/{orderId}':
-    x-exegesis-controller: Store
+    x-exegesis-controller: store
     get:
       tags:
         - store
@@ -422,7 +419,7 @@ paths:
       responses:
         '200':
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -432,10 +429,10 @@ paths:
                 $ref: '#/components/schemas/Order'
         '400':
           description: Invalid ID supplied
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
         '404':
           description: Order not found
-          x-gulp-swagger-codegen-outcome: notFoundError
+          x-gulp-openapi-code-generator-outcome: notFoundError
 
     delete:
       tags:
@@ -459,13 +456,13 @@ paths:
       responses:
         '400':
           description: Invalid ID supplied
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
         '404':
           description: Order not found
-          x-gulp-swagger-codegen-outcome: orderNotFoundError
+          x-gulp-openapi-code-generator-outcome: orderNotFoundError
 
   /user:
-    x-exegesis-controller: User
+    x-exegesis-controller: user
     post:
       tags:
         - user
@@ -487,7 +484,7 @@ paths:
       responses:
         default:
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -497,7 +494,7 @@ paths:
                 $ref: '#/components/schemas/User'
 
   /user/createWithList:
-    x-exegesis-controller: User
+    x-exegesis-controller: user
     post:
       tags:
         - user
@@ -522,7 +519,7 @@ paths:
       responses:
         '200':
           description: Successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -534,7 +531,7 @@ paths:
           description: successful operation
 
   /user/login:
-    x-exegesis-controller: User
+    x-exegesis-controller: user
     get:
       tags:
         - user
@@ -558,7 +555,7 @@ paths:
       responses:
         '200':
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           headers:
             X-Rate-Limit:
               description: calls per hour allowed by the user
@@ -579,10 +576,10 @@ paths:
                 type: string
         '400':
           description: Invalid username/password supplied
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
 
   /user/logout:
-    x-exegesis-controller: User
+    x-exegesis-controller: user
     get:
       tags:
         - user
@@ -594,10 +591,10 @@ paths:
       responses:
         default:
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
 
   '/user/{username}':
-    x-exegesis-controller: User
+    x-exegesis-controller: user
     get:
       tags:
         - user
@@ -617,7 +614,7 @@ paths:
       responses:
         '200':
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -627,10 +624,10 @@ paths:
                 $ref: '#/components/schemas/User'
         '400':
           description: Invalid username supplied
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
         '404':
           description: User not found
-          x-gulp-swagger-codegen-outcome: notFoundError
+          x-gulp-openapi-code-generator-outcome: notFoundError
 
     put:
       tags:
@@ -661,7 +658,7 @@ paths:
       responses:
         default:
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
 
     delete:
       tags:
@@ -683,13 +680,13 @@ paths:
       responses:
         '400':
           description: Invalid username supplied
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
         '404':
           description: User not found
-          x-gulp-swagger-codegen-outcome: notFoundError
+          x-gulp-openapi-code-generator-outcome: notFoundError
 
   /Address:
-    x-exegesis-controller: Address
+    x-exegesis-controller: address
     post:
       tags:
         - address
@@ -712,7 +709,7 @@ paths:
       responses:
         '200':
           description: Successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -722,7 +719,7 @@ paths:
                 $ref: '#/components/schemas/Address'
         '405':
           description: Invalid input
-          x-gulp-swagger-codegen-outcome: badInputError
+          x-gulp-openapi-code-generator-outcome: badInputError
 
     put:
       tags:
@@ -746,7 +743,7 @@ paths:
       responses:
         '200':
           description: Successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -756,16 +753,16 @@ paths:
                 $ref: '#/components/schemas/Address'
         '400':
           description: Invalid ID supplied
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
         '404':
           description: Address not found
-          x-gulp-swagger-codegen-outcome: notFoundError
+          x-gulp-openapi-code-generator-outcome: notFoundError
         '405':
           description: Validation exception
-          x-gulp-swagger-codegen-outcome: badInputError
+          x-gulp-openapi-code-generator-outcome: badInputError
 
   /Address/{addressId}:
-    x-exegesis-controller: Address
+    x-exegesis-controller: address
     get:
       tags:
         - address
@@ -784,7 +781,7 @@ paths:
       responses:
         '200':
           description: successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -794,10 +791,10 @@ paths:
                 $ref: '#/components/schemas/Address'
         '400':
           description: Invalid addressID supplied
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
         '404':
           description: Address not found
-          x-gulp-swagger-codegen-outcome: notFoundError
+          x-gulp-openapi-code-generator-outcome: notFoundError
 
     delete:
       tags:
@@ -819,7 +816,7 @@ paths:
       responses:
         '400':
           description: Invalid address value
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
 
 externalDocs:
   description: Find out more about Swagger

@@ -12,7 +12,7 @@ export default () => {
             handler(request, response);
             return;
         }
-        // Causes swagger to not try to parse the incomming stream.
+        // Causes openapi to not try to parse the incomming stream.
         request._body = true;
         next();
     };

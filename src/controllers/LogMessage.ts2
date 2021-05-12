@@ -8,7 +8,7 @@ export class LogMessageController {
  public addLogMessage(username: string, modelLogObject: any, responder) {
     const modelLog = new LogMessage(username, modelLogObject);
 
-    // swagger object screws with the object.
+    // openAPI object screws with the object.
     // we need to re-pass the object as json for mongoose schema to work properly
     const modelLogJsonFormat = JSON.parse(JSON.stringify(modelLog));
     new LogMessageSchema(modelLogJsonFormat).save().then((res) => {
