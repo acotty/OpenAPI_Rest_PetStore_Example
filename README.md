@@ -1,60 +1,66 @@
-# rest-service-example
+# OpenAPI RestAPI PetStore Example
+
 Rest data service example.
 
-# Windows /MAC Start
+## Windows /MAC Start
 
-## Pre-requirements
-* Docker Desckyop CE v20.10.5+
+### Pre-requirements
+
+* Docker Descktop CE 3.0.0+
 * Docker Compose v1.28.5+
-* Node v15.11.0 or later
-* Yarn v1.22.4 (not yarn 2.x series) 
-* NPN v7.6.3+
+* Node v12.0.0+
+* Yarn v1.22.4+ (not yarn 2.x series)
+* NPN v7.12.0+
 
-## Setup
-Create a local .env file for docker compose with the following lines in it if it does not exist:
-````
-DOCKER_PREFIX=
-BASEHOST=local.test.com.au
-````
+### Setup
 
-## Install node moodule dependencies
-```
-1. yarn install
-```
+TBA
 
 ### To launch the environment
-```
-1. make up
+
+```make
+make up
 ```
 
-### To tear down
-This will delete the containers and images:
-```
-1. make down
-```
+SQL Configuration: TBA
 
-This command will stop the running containers:
-```
-1. make stop
+### Install node moodule dependencies
+
+```yarn
+yarn install
 ```
 
 ### Launch Data Service
-```
-1. yarn install
-2. yarn start
+
+```yarn
+yarn install
+yarn start
 ```
 
 ### To access the service OpenAPI Rest API UI
 
+[http://localhost:10010/API_docs/](http://localhost:10010/API_docs/)
+
+### To tear down docker environment
+
+This will delete the containers and images:
+
+```make
+make down
 ```
-http://rest-service-test.local.test.com.au:10010/docs
+
+This command will stop the running containers:
+
+```make
+make stop
 ```
 
 #### Tips
+
 Don't use *.localhost domain, chrome doesn't support sub-domain cookies on localhost
 
-
 ## Unit Tests
+
 To run the data service unit tests use the following commands:
 
 * yarn test  - this is an alais for yarn run server-test
@@ -65,34 +71,49 @@ To run the data service unit tests use the following commands:
 
 Part of the unit tests produces a set of code coverage reports that are in the coverage directory. To view the report on the following  file:
 
-```
-covergae./index.html
+```NYC
+coverage./index.html
 ```
 
-# DEBUG DATA SERVICE
+## DEBUG DATA SERVICE
+
+### Via Visual Studio Code configuration and run
 
 1. If you are using Visual Studio Code editor ensure you have the following files:
 
-```
-  * vscode\launch.json
-  * vscode\tasks.json
-```  
+   ```vscode
+      * vscode\launch.json
+      * vscode\tasks.json
+   ```  
 
 2. In Visual Studio Code select the debugger on the left and then above the debug side bar select the launch option you want and press the start debugging button. For more details have a look a the following URL:
 
-```
-   https://code.visualstudio.com/docs/editor/debugging
-```
+      [https://code.visualstudio.com/docs/editor/debugging](https://code.visualstudio.com/docs/editor/debugging)
 
    If you select the "Debug data Service"" option you can then set breakpoints in teh typescript files and debug the edge service like a normal nodejs application.
 
-# Notes
+### Via Visual Studio Code Terminal
+
+1. Start a **"Javascript Debug Terminal"**
+2. Set breakpoints.
+3. Run app via **yarn start**.
+4. Debug running app.
+
+## Notes
 
 * Docker compose use container-names to make service resolution easier.  The side effect is you can't use compose scaling options
 * Controller file name must be lowercase!!!
 
-#### Trouble Shooting
+## Trouble Shooting
+
 * 'There were no instances available for the specified service.' - try to restart 'make restart` then wait to try again
 * docker hyperkit CPU too high - wait (open to better suggestions)
 
+## See Also
 
+The following github projects are useful reading:
+
+* <https://github.com/acotty/opeanapi-service-skeleton-tutorial>
+  * Tutorial on how to use this package.
+* [https://github.com/acotty/opeanapi-service-skeleton](https://github.com/acotty/opeanapi-service-skeleton)
+  * Code used to spin up the service code under the hood.
