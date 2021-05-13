@@ -1,6 +1,7 @@
 openapi: 3.0.2
 servers:
-  - url: /v3
+  - url: /
+#   - url: /v3
 info:
   description: |-
     This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
@@ -16,7 +17,6 @@ info:
   license:
     name: Apache 2.0 for OpenAPI yaml file
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-
 tags:
   - name: pet
     description: Everything about your Pets
@@ -27,10 +27,10 @@ tags:
 
 
 # Apply the following to all of the API's. Add additional security acess to this on a single API basis
-security:
-#  - api_key: []
-  - petstoreAuthorise:
-      - read:pets
+# security:
+# #  - api_key: []
+#   - petstoreAuthorise:
+#       - read:pets
 
 paths:
   /pet:
@@ -41,9 +41,9 @@ paths:
       summary: Add a new pet to the store
       description: Add a new pet to the store
       operationId: addPet
-      security:
-        - petstoreAuthorise:
-            - 'write:pets'
+      # security:
+      #   - petstoreAuthorise:
+      #       - 'write:pets'
       requestBody:
         description: Create a new pet in the store
         required: true
@@ -57,7 +57,7 @@ paths:
       responses:
         '200':
           description: Successful operation
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             application/json:
               schema:
@@ -68,16 +68,15 @@ paths:
         '405':
           description: Invalid input
           x-gulp-openapi-code-generator-outcome: badInputError
-
     put:
       tags:
         - pet
       summary: Update an existing pet
       description: Update an existing pet by Id
       operationId: updatePet
-      security:
-        - petstoreAuthorise:
-            - write:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - write:pets
       requestBody:
         description: Update an existent pet in the store
         required: true
@@ -231,9 +230,9 @@ paths:
       summary: Updates a pet in the store with form data
       description: ''
       operationId: updatePetWithForm
-      security:
-        - petstoreAuthorise:
-            - write:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - write:pets
       parameters:
         - name: petId
           in: path
@@ -263,9 +262,9 @@ paths:
       summary: Deletes a pet
       description: ''
       operationId: deletePet
-      security:
-        - petstoreAuthorise:
-            - write:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - write:pets
       parameters:
         - name: petId
           in: path
@@ -297,9 +296,9 @@ paths:
       summary: uploads an image
       description: ''
       operationId: uploadFile
-      security:
-        - petstoreAuthorise:
-            - write:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - write:pets
       parameters:
         - name: petId
           in: path
@@ -371,9 +370,9 @@ paths:
       summary: Place an order for a pet
       description: Place a new order in the store
       operationId: placeOrder
-      security:
-        - petstoreAuthorise:
-            - write:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - write:pets
       requestBody:
         content:
           application/json:
@@ -396,7 +395,6 @@ paths:
         '405':
           description: Invalid input
           x-gulp-openapi-code-generator-outcome: badInputError
-
   '/store/order/{orderId}':
     x-exegesis-controller: store
     get:
@@ -433,7 +431,6 @@ paths:
         '404':
           description: Order not found
           x-gulp-openapi-code-generator-outcome: notFoundError
-
     delete:
       tags:
         - store
@@ -442,9 +439,9 @@ paths:
         For valid response try integer IDs with value < 1000. Anything above
         1000 or nonintegers will generate API errors
       operationId: deleteOrder
-      security:
-        - petstoreAuthorise:
-            - write:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - write:pets
       parameters:
         - name: orderId
           in: path
@@ -460,7 +457,6 @@ paths:
         '404':
           description: Order not found
           x-gulp-openapi-code-generator-outcome: orderNotFoundError
-
   /user:
     x-exegesis-controller: user
     post:
@@ -469,9 +465,9 @@ paths:
       summary: Create user
       description: This can only be done by the logged in user.
       operationId: createUser
-      security:
-        - petstoreAuthorise:
-            - write:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - write:pets
       requestBody:
         content:
           application/json:
@@ -482,7 +478,7 @@ paths:
               $ref: '#/components/schemas/User'
         description: Created user object
       responses:
-        default:
+        '200':
           description: successful operation
           x-gulp-openapi-code-generator-outcome: success
           content:
@@ -501,9 +497,9 @@ paths:
       summary: Creates list of users with given input array
       description: 'Creates list of users with given input array'
       operationId: createUsersWithListInput
-      security:
-        - petstoreAuthorise:
-            - write:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - write:pets
       requestBody:
         content:
           application/json:
@@ -577,7 +573,6 @@ paths:
         '400':
           description: Invalid username/password supplied
           x-gulp-openapi-code-generator-outcome: badRequestError
-
   /user/logout:
     x-exegesis-controller: user
     get:
@@ -592,7 +587,6 @@ paths:
         default:
           description: successful operation
           x-gulp-openapi-code-generator-outcome: success
-
   '/user/{username}':
     x-exegesis-controller: user
     get:
@@ -601,9 +595,9 @@ paths:
       summary: Get user by user name
       description: ''
       operationId: getUserByName
-      security:
-        - petstoreAuthorise:
-            - admin:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - admin:pets
       parameters:
         - name: username
           in: path
@@ -628,17 +622,16 @@ paths:
         '404':
           description: User not found
           x-gulp-openapi-code-generator-outcome: notFoundError
-
     put:
       tags:
         - user
       summary: Update user
       description: This can only be done by the logged in user.
       operationId: updateUser
-      security:
-        - petstoreAuthorise:
-            - write:pets
-            - admin:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - write:pets
+      #       - admin:pets
       parameters:
         - name: username
           in: path
@@ -666,10 +659,10 @@ paths:
       summary: Delete user
       description: This can only be done by the logged in user.
       operationId: deleteUser
-      security:
-        - petstoreAuthorise:
-            - write:pets
-            - admin:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - write:pets
+      #       - admin:pets
       parameters:
         - name: username
           in: path
@@ -684,7 +677,6 @@ paths:
         '404':
           description: User not found
           x-gulp-openapi-code-generator-outcome: notFoundError
-
   /Address:
     x-exegesis-controller: address
     post:
@@ -693,9 +685,9 @@ paths:
       summary: Add a new address to the store
       description: Add a new address to the store
       operationId: addAddress
-      security:
-        - petstoreAuthorise:
-            - write:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - write:pets
       requestBody:
         description: Create a new address in the store
         required: true
@@ -720,16 +712,15 @@ paths:
         '405':
           description: Invalid input
           x-gulp-openapi-code-generator-outcome: badInputError
-
     put:
       tags:
         - address
       summary: Update an existing address
       description: Update an existing address by addressId
       operationId: updateAddress
-      security:
-        - petstoreAuthorise:
-            - write:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - write:pets
       requestBody:
         description: Update an existing address in the store
         required: true
@@ -795,16 +786,15 @@ paths:
         '404':
           description: Address not found
           x-gulp-openapi-code-generator-outcome: notFoundError
-
     delete:
       tags:
         - address
       summary: Deletes an address
       description: 'Deletes an address in the store'
       operationId: deleteAddress
-      security:
-        - petstoreAuthorise:
-            - write:pets
+      # security:
+      #   - petstoreAuthorise:
+      #       - write:pets
       parameters:
         - name: addressId
           in: path
@@ -1019,20 +1009,20 @@ components:
             items:
               $ref: '#/components/schemas/User'
       description: List of user object
-  securitySchemes:
-    petstoreAuthorise:
-      type: oauth2
-      flows:
-        #implicit:
-        #authorizationCode:
-        password:
-          # authorizationUrl: 'https://localhost:9443/oauth2/authorize'
-          tokenUrl: 'http://localhost:9443/oauth2/token'
-          scopes:
-            write:pets: Grant wite access 
-            read:pets: Grant read access 
-            admin:pets: Grants admin access to admin operations
-#    api_key:
-#      type: apiKey
-#      name: api_key
-#      in: header
+#   securitySchemes:
+#     petstoreAuthorise:
+#       type: oauth2
+#       flows:
+#         #implicit:
+#         #authorizationCode:
+#         password:
+#           # authorizationUrl: 'https://localhost:9443/oauth2/authorize'
+#           tokenUrl: 'http://localhost:9443/oauth2/token'
+#           scopes:
+#             write:pets: Grant wite access 
+#             read:pets: Grant read access 
+#             admin:pets: Grants admin access to admin operations
+# #    api_key:
+# #      type: apiKey
+# #      name: api_key
+# #      in: header

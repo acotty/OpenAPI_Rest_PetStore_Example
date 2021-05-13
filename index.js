@@ -4,6 +4,7 @@
 
 process.env.NODE_ENV = 'local';
 //process.env.NODE_ENV = 'production';
+process.env.debug = '*';
 
 const UseCookie=1;
 
@@ -176,6 +177,10 @@ app.generateInstance()
       event: `Showing req.cookies['keycloak-token'] cookie data`
     });
 
+  });
+
+  app.get('/', function (req, res) {
+    res.render('index');
   });
 
   // Return a 404

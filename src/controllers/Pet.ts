@@ -10,7 +10,13 @@ const UPDATE_SUCCESS_MESSAGE = "Successfully updated Pet";
 const DEFAULT_PAGE_SIZE = 50;
 
 export class PetController {
-/*
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  public addPet(typedRequestBodyParam, responder): void {
+    responder.success(typedRequestBodyParam);
+  }
+
+  /*
   public createModelStandardLinkAttachment(specificationNumber: string, variationNumber: number,
                                            modelStandardLinkAttachment: any, responder) {
     const data = JSON.parse(JSON.stringify(modelStandardLinkAttachment));
@@ -248,7 +254,7 @@ export class PetController {
 */
 
 
-  public findPetsByStatus(status: string, responder) {
+  public findPetsByStatus(status: string, responder: { success: (arg0: { id: number; name: string; category: string; photoUrls: string[]; tags: string[]; status: string; }[]) => any; }) {
     const FakePet = {
       id: 1,
       name: "Fake pet",
@@ -263,7 +269,7 @@ export class PetController {
     );
   }
 
-  public async  deletePet(petId: number, responder) {
+  public async  deletePet(petId: number, responder: { success: (arg0: { type: string; message: string; }) => any; }) {
 
     return responder.success( {
       type: petId.toString(),

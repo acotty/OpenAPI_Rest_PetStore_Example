@@ -178,12 +178,12 @@ const generateInstance = () => skeleton({
       cookieParser(),   // for a Keycloak token
       bodyParser(),
     ],
-    afterOpenAPI: [
-      afterOpenAPITest()
-    ],
-    errorProcessingNoRoute: [
-      errorReqestNotProcessed404()
-    ],
+    // afterOpenAPI: [
+    //   afterOpenAPITest()
+    // ],
+    // errorProcessingNoRoute: [
+    //   errorReqestNotProcessed404()
+    // ],
   },
   ioc: {
     autoRegister: {
