@@ -1,7 +1,10 @@
-export interface ILogMessage {
-  id: string;
+interface ILogMessage {
+  id: number;
+  userName: string;
+  loggedDate: Date;
   level: string;
-  created_at: Date;
-  username: string;
   message: string;
 }
+
+export default ILogMessage;
+

@@ -1,282 +1,70 @@
-import { getRepository } from "typeorm";
-import Pet from "../models/Pet";
-import IPet from "../interfaces/Pet";
+import { getConnection, getRepository } from "typeorm";
+import mPet from "../models/Pet";
+import iPet from "../interfaces/Pet";
 import * as _ from "lodash";
 
-const CREATE_SUCCESS_MESSAGE = "Successfully created a new Pet";
-const DELETE_SUCCESS_MESSAGE = "Successfully deleted Pet";
-const GET_SUCCESS_MESSAGE = "Successfully found Pet";
-const UPDATE_SUCCESS_MESSAGE = "Successfully updated Pet";
-const DEFAULT_PAGE_SIZE = 50;
+// const fileName = __filename.split(__dirname+"/").pop();
 
 export class PetController {
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public addPet(typedRequestBodyParam, responder): void {
-    responder.success(typedRequestBodyParam);
+  private getNotSupportedJsonObject(){
+    const err = new Error();
+    const caller_line = err.stack.split("\n")[2];
+    const index = caller_line.indexOf("at ");
+    const lineDetails = caller_line.slice(index+2, caller_line.length);
+
+    let notSupportedJson = {};
+    notSupportedJson['developerMessage'] = `The rest API has not been coded yet, from ${lineDetails}`;
+    notSupportedJson['userMessage'] = `The rest API has not been coded yet.`;
+    notSupportedJson['moreInfoMessage'] = ``;
+    notSupportedJson['debugMessage'] = ``;
+
+    return notSupportedJson;
   }
 
-  /*
-  public createModelStandardLinkAttachment(specificationNumber: string, variationNumber: number,
-                                           modelStandardLinkAttachment: any, responder) {
-    const data = JSON.parse(JSON.stringify(modelStandardLinkAttachment));
-    if (data.hasOwnProperty("_id")) {
-      delete data._id;
-    }
-    data.specificationNumber = specificationNumber;
-    data.variationNumber = variationNumber;
-    new ModelStandardLinkAttachment(data).save().then((result) => {
-      const modelStandardLinkAttachments = [];
-      modelStandardLinkAttachments.push(result);
-      responder.success({
-        message: CREATE_SUCCESS_MESSAGE,
-        modelStandardLinkAttachments,
-      });
-    });
-  }
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  public addPet(typedRequestBodyParam, responder) {
 
-  public countStandardLinkAttachments(specificationNumber: string, responder) {
-    const query = { specificationNumber };
-    ModelStandardLinkAttachment.count(query)
-      .then(async (totalStandardLinkAttachments) => {
-        const activeStandardLinkAttachments = await ModelStandardLinkAttachment.count({specificationNumber, status: "active"}).lean();
-        const standardLinkAttachments = 0;
-        if (!totalStandardLinkAttachments) {
-          totalStandardLinkAttachments = standardLinkAttachments;
-        }
-        return responder.success({
-          message: GET_SUCCESS_MESSAGE,
-          totalStandardLinkAttachments,
-          activeStandardLinkAttachments
-        });
+    const petRepository = getRepository(mPet);
+    const pet = new mPet();
+    const petJson = JSON.parse(JSON.stringify(typedRequestBodyParam));
+
+    return petRepository
+      .save({
+        ...pet,
+        ...petJson,
+      })
+      .then( (result) => {
+        return responder.success(result);
+      })
+      .catch( (error) => {
+        return responder.serverError(error);
       });
   }
 
-  public getById(standardLinkAttachmentId: string, responder) {
-    ModelStandardLinkAttachment.findById(standardLinkAttachmentId).then((result) => {
-      const modelStandardLinkAttachments = [];
-      modelStandardLinkAttachments.push(result);
-      return responder.success({
-        message: GET_SUCCESS_MESSAGE,
-        modelStandardLinkAttachments,
-      });
-    });
+  public updatePet(typedRequestBodyParam, responder) {
+    return responder.notSupportedError(this.getNotSupportedJsonObject());
   }
 
-  public deleteModelStandardLinkAttachmentById(standardLinkAttachmentId: string, responder) {
-    ModelStandardLinkAttachment.findByIdAndRemove(standardLinkAttachmentId).then((result) => {
-      const modelStandardLinkAttachments = [];
-      modelStandardLinkAttachments.push(result);
-      return responder.success({
-        message: DELETE_SUCCESS_MESSAGE,
-        modelStandardLinkAttachments,
-      });
-    });
+  public findPetsByStatus(typedRequestBodyParam, responder) {
+    return responder.notSupportedError(this.getNotSupportedJsonObject());
   }
 
-  public deleteBySpecificationAndVariationNumber(specificationNumber: string, variationNumber: number, responder) {
-    ModelStandardLinkAttachment.find({specificationNumber, variationNumber}).lean()
-    .then(async (result: [any]) => {
-      for (const pcAttach of result) {
-        if (!pcAttach.lastUpdated) {
-          await ModelStandardLinkAttachment.findByIdAndRemove(pcAttach._id).exec();
-        }
-      }
-      const totalStandardLinkAttachments = await ModelStandardLinkAttachment.count({specificationNumber}).exec();
-      const modelStandardLinkAttachments = [];
-      modelStandardLinkAttachments.push(result);
-      return responder.success({
-        message: DELETE_SUCCESS_MESSAGE,
-        modelStandardLinkAttachments,
-        totalStandardLinkAttachments
-      });
-    });
+  public indPetsByTags(typedRequestBodyParam, responder) {
+    return responder.notSupportedError(this.getNotSupportedJsonObject());
   }
 
-  public getBySpecificationNumber(specificationNumber: string, searchQuery: number, startrow: number, endrow: number, responder) {
-    let limit;
-    let query;
-    if (searchQuery !== undefined) {
-      query = { $and: [ {specificationNumber}, { $where: `/${searchQuery}/.test(this.variationNumber)`}]};
-    } else {
-      query = {specificationNumber};
-    }
-    startrow = startrow || 0;
-    startrow = startrow > 0 ? startrow - 1 : 0;
-    if (endrow || endrow === 0) {
-      limit = 0;
-      if (endrow > 0) {
-        limit = endrow - startrow;
-      }
-    } else {
-      limit = DEFAULT_PAGE_SIZE;
-    }
-
-    ModelStandardLinkAttachment.find(query).sort({ variationNumber: 1, totalStartupPercentage: 1}).lean()
-      .then(async (response: [any]) => {
-        let progressiveSettingsPcAttachArray;
-        const index = response.findIndex((item, i) => {
-          return item.variationNumber === 99;
-        });
-        const endIndex = response.findIndex((item, i) => {
-          return item.variationNumber > 99;
-        });
-
-        if (index === -1 && endIndex === -1) {
-          progressiveSettingsPcAttachArray = response;
-        } else {
-          const leftSide = (endIndex === -1) ? _.slice(response, index) : _.slice(response, index, endIndex);
-          const rightSide = _.pullAll(response, leftSide);
-          progressiveSettingsPcAttachArray = leftSide.concat(rightSide);
-        }
-        progressiveSettingsPcAttachArray = await _.slice(progressiveSettingsPcAttachArray, startrow, endrow);
-        await this.countFilteredStandardLinkAttachments(query)
-          .then((totalStandardLinkAttachments) => {
-            return responder.success({
-              message: GET_SUCCESS_MESSAGE,
-              modelStandardLinkAttachments: progressiveSettingsPcAttachArray,
-              totalStandardLinkAttachments,
-            });
-          });
-      });
+  public getPetById(typedRequestBodyParam, responder) {
+    return responder.notSupportedError(this.getNotSupportedJsonObject());
   }
 
-  public getBySpecificationAndVariationNumber(specificationNumber: string, variationNumber: number, responder) {
-    const query = { specificationNumber, variationNumber };
-    ModelStandardLinkAttachment.find(query).sort({ createdAt: 1 }).lean()
-    .then((modelStandardLinkAttachments) => {
-      return responder.success({
-        message: GET_SUCCESS_MESSAGE,
-        modelStandardLinkAttachments,
-      });
-    });
+  public updatePetWithForm(typedRequestBodyParam, responder) {
+    return responder.notSupportedError(this.getNotSupportedJsonObject());
   }
 
-  public updateModelStandardLinkAttachmentById(id: string, modelStandardLinkAttachment: any, responder) {
-    const modelStandardLinkAttachmentObj = JSON.parse(JSON.stringify(modelStandardLinkAttachment));
-    if (modelStandardLinkAttachmentObj.hasOwnProperty("_id")) {
-      delete modelStandardLinkAttachmentObj._id;
-    }
-    ModelStandardLinkAttachment.findByIdAndUpdate(id, { $set: modelStandardLinkAttachmentObj }, { new: true },
-      (err, result) => {
-        const modelStandardLinkAttachments = [];
-        modelStandardLinkAttachments.push(result);
-        return responder.success({
-          message: UPDATE_SUCCESS_MESSAGE,
-          modelStandardLinkAttachments,
-        });
-      });
+  public deletePet(typedRequestBodyParam, responder) {
+    return responder.notSupportedError(this.getNotSupportedJsonObject());
   }
-
-  private countFilteredStandardLinkAttachments(query): Promise<any> {
-    return ModelStandardLinkAttachment.count(query)
-      .then((totalStandardLinkAttachments) => {
-        const standardLinkAttachments = 0;
-        if (!totalStandardLinkAttachments) {
-          totalStandardLinkAttachments = standardLinkAttachments;
-        }
-        return totalStandardLinkAttachments;
-      });
-  }
-
-  public async getByVersionId(versionId: string, searchQuery: number, startrow: number, endrow: number, responder) {
-    let limit;
-    let query;
-    startrow = startrow || 0;
-    startrow = startrow > 0 ? startrow - 1 : 0;
-    if (endrow || endrow === 0) {
-      limit = 0;
-      if (endrow > 0) {
-        limit = endrow - startrow;
-      }
-    } else {
-      limit = DEFAULT_PAGE_SIZE;
-    }
-    const version: any = await ModelVersion.findById(versionId).lean();
-    const specificationNumber = version.specificationNumber;
-    let standardLinkAttachments = version.standardLinkAttachments;
-    if (!standardLinkAttachments) {
-      return responder.badRequest({
-        errorCode: 400,
-        errorId: 1,
-        message: `No standardLinkAttachments found for ${versionId}`,
-      });
-    }
-    standardLinkAttachments = _.sortBy(standardLinkAttachments, ["variationNumber", "totalStartupPercentage"]);
-    let progressiveSettingsPcAttachArray: any = [];
-    if (searchQuery !== undefined) {
-      query = {
-        $and: [
-          {specificationNumber},
-          { $where: `/${searchQuery}/.test(this.variationNumber)`}
-        ]
-      };
-      progressiveSettingsPcAttachArray = await ModelStandardLinkAttachment.find(query).sort({ variationNumber: 1, totalStartupPercentage: 1}).skip(startrow).limit(limit).lean();
-    } else {
-      standardLinkAttachments = _.slice(standardLinkAttachments, startrow, endrow);
-      for (const standardLinkAttachment of standardLinkAttachments) {
-        query = {
-          $and: [
-            { specificationNumber: version.specificationNumber },
-            { totalStartupPercentage: standardLinkAttachment.totalStartupPercentage },
-            { variationNumber: standardLinkAttachment.variationNumber},
-            { incrementPercentage: standardLinkAttachment.incrementPercentage}
-          ]
-        };
-        const modelStandardLinkAttachment = await ModelStandardLinkAttachment.findOne(query).lean();
-        if (modelStandardLinkAttachment) {
-          progressiveSettingsPcAttachArray.push(modelStandardLinkAttachment);
-        }
-      }
-      progressiveSettingsPcAttachArray = _.sortBy(progressiveSettingsPcAttachArray, ["variationNumber", "totalStartupPercentage"]);
-    }
-    let modelStandardLinkAttachments: any[];
-    const index = progressiveSettingsPcAttachArray.findIndex((item, i) => {
-      return item.variationNumber === 99;
-    });
-    const endIndex = progressiveSettingsPcAttachArray.findIndex((item, i) => {
-      return item.variationNumber > 99;
-    });
-    if (index === -1 && endIndex === -1) {
-      modelStandardLinkAttachments = progressiveSettingsPcAttachArray;
-    } else {
-      const leftSide = (endIndex === -1) ? _.slice(progressiveSettingsPcAttachArray, index) : _.slice(progressiveSettingsPcAttachArray, index, endIndex);
-      const rightSide = _.pullAll(progressiveSettingsPcAttachArray, leftSide);
-      modelStandardLinkAttachments = leftSide.concat(rightSide);
-    }
-
-    return responder.success({
-      message: GET_SUCCESS_MESSAGE,
-      modelStandardLinkAttachments,
-      totalStandardLinkAttachments: modelStandardLinkAttachments.length
-    });
-  }
-*/
-
-
-  public findPetsByStatus(status: string, responder: { success: (arg0: { id: number; name: string; category: string; photoUrls: string[]; tags: string[]; status: string; }[]) => any; }) {
-    const FakePet = {
-      id: 1,
-      name: "Fake pet",
-      category: "category",
-      photoUrls: ["none"],
-      tags: ["none"],
-      status: status
-    };
-
-    return responder.success(
-      [FakePet]
-    );
-  }
-
-  public async  deletePet(petId: number, responder: { success: (arg0: { type: string; message: string; }) => any; }) {
-
-    return responder.success( {
-      type: petId.toString(),
-      message: DELETE_SUCCESS_MESSAGE,
-    });
-  }
-
 }
 
 module.exports = PetController;

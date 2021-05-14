@@ -1,9 +1,7 @@
 import { getConnection, getRepository } from "typeorm";
-import mOrder from "../models/Order";
-import iOrder from "../interfaces/Order";
 import * as _ from "lodash";
 
-export class StoreController {
+export class PetImageController {
 
   private getNotSupportedJsonObject(){
     const err = new Error();
@@ -20,22 +18,9 @@ export class StoreController {
     return notSupportedJson;
   }
 
-  public getStoreInventory(typedRequestBodyParam, responder) {
+  public uploadPetImage(typedRequestBodyParam, responder) {
     return responder.notSupportedError(this.getNotSupportedJsonObject());
   }
-
-  public placeStoreOrder(typedRequestBodyParam, responder) {
-    return responder.notSupportedError(this.getNotSupportedJsonObject());
-  }
-
-  public getStoreOrderById(typedRequestBodyParam, responder) {
-    return responder.notSupportedError(this.getNotSupportedJsonObject());
-  }
-
-  public deleteStoreOrder(typedRequestBodyParam, responder) {
-    return responder.notSupportedError(this.getNotSupportedJsonObject());
-  }
-
 }
 
-module.exports = StoreController;
+module.exports = PetImageController;

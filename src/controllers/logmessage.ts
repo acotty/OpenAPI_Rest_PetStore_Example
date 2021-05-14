@@ -1,8 +1,8 @@
-import { getRepository } from "typeorm";
-import mAddress from "../models/Address";
-import iAddress from "../interfaces/Address";
+import { getConnection, getRepository } from "typeorm";
+import mLogMessage from "../models/LogMessage";
+import iLogMessage from "../interfaces/LogMessage";
 
-export class AddressController {
+export class LogMessageController {
 
   private getNotSupportedJsonObject(){
     const err = new Error();
@@ -19,21 +19,13 @@ export class AddressController {
     return notSupportedJson;
   }
 
-  public addAddress(typedRequestBodyParam, responder) {
+  public addLogMessage(typedRequestBodyParam, responder) {
     return responder.notSupportedError(this.getNotSupportedJsonObject());
   }
 
-  public updateAddress(typedRequestBodyParam, responder) {
-    return responder.notSupportedError(this.getNotSupportedJsonObject());
-  }
-
-  public getAddressByID(typedRequestBodyParam, responder) {
-    return responder.notSupportedError(this.getNotSupportedJsonObject());
-  }
-
-  public deleteAddress(typedRequestBodyParam, responder) {
+  public getLogMessages(typedRequestBodyParam, responder) {
     return responder.notSupportedError(this.getNotSupportedJsonObject());
   }
 }
 
-module.exports = AddressController;
+module.exports = LogMessageController;

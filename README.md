@@ -75,7 +75,7 @@ Part of the unit tests produces a set of code coverage reports that are in the c
 coverage./index.html
 ```
 
-## DEBUG DATA SERVICE
+## DEBUG RESTAPI SERVICE
 
 ### Via Visual Studio Code configuration and run
 
@@ -98,6 +98,25 @@ coverage./index.html
 2. Set breakpoints.
 3. Run app via **yarn start**.
 4. Debug running app.
+
+
+## REST API RESPONSE CODES
+
+For more details on the rest api response codes see <https://restfulapi.net/http-status-codes> and/or <https://www.restapitutorial.com/httpstatuscodes.html>
+
+These are the standard restAPI response codes:
+
+```Codes
+    400 Bad Request – client sent an invalid request, such as lacking required request body or parameter
+    401 Unauthorized – client failed to authenticate with the server
+    403 Forbidden – client authenticated but does not have permission to access the requested resource
+    404 Not Found – the requested resource does not exist
+    412 Precondition Failed – one or more conditions in the request header fields evaluated to false
+    
+    500 Internal Server Error – a generic error occurred on the server
+    501 Not Implemented - The HTTP method is not supported by the server and cannot be handled.
+    503 Service Unavailable – the requested service is not available
+```
 
 ## Notes
 

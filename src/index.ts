@@ -77,7 +77,7 @@ createConnection({
     Tag,
     User,
   ],
-  synchronize: false,
+  synchronize: false,   // True - create tables if they do not exist.
   logging: true
 }).then(connection => {
   // here you can start to work with your entities
