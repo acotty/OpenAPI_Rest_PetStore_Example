@@ -38,7 +38,7 @@
     "lodash": "^4.17.21",
     "moment-timezone": "^0.5.33",
     "mongodb": "^3.6.6",
-    "mssql": "^7.0.0",
+    "mssql": "^7.1.0",
     "mysql2": "^2.2.5",
     "request-data": "^1.4.1",
     "rmdir": "^1.2.0",
@@ -46,7 +46,7 @@
     "typeorm": "^0.2.32",
     "uuid": "^8.3.2",
     "winston": "^3.3.3",
-    "xlsx": "^0.16.9",
+    "xlsx": "^0.17.0",
     "yamljs": "^0.3.0",
     "openapi-service-skeleton": "file:openapi-service-skeleton-v2.0.0-beta.23.tgz"
   },
@@ -54,7 +54,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.18",
     "@types/mocha": "^8.2.2",
-    "@types/node": "^15.0.2",
+    "@types/node": "^15.0.3",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^4.23.0",
     "@typescript-eslint/parser": "^4.23.0",
