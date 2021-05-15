@@ -3,7 +3,6 @@
 
 "use strict";
 
-// const esdoc = require("esdoc2");
 const gulp = require("gulp");
 const fs = require("fs");
 const rmdir = require("rmdir");
@@ -100,8 +99,3 @@ gulp.task("clean", () => {
   }
   return Promise.resolve("Clean completed");
 });
-
-// gulp.task("docs", () => {
-//   return esdoc();
-// });
-

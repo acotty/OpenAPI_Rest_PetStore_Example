@@ -1,7 +1,7 @@
 {
   "name": "rest-service-example",
   "version": "0.0.1",
-  "description": "Rest Service Example",
+  "description": "Petstore RestAPI Service Example",
   "main": "index.js",
   "angular-cli": {},
   "scripts": {
@@ -48,24 +48,19 @@
     "winston": "^3.3.3",
     "xlsx": "^0.17.0",
     "yamljs": "^0.3.0",
-    "openapi-service-skeleton": "file:openapi-service-skeleton-v2.0.0-beta.23.tgz"
+    "openapi-service-skeleton": "https://github.com/acotty/openapi-service-skeleton/releases/download/2.0.0-beta.1/openapi-service-skeleton-v2.0.0-beta.1.tgz"
   },
-  "openapi-service-skeleton_old": "https://github.com/acotty/openapi-service-skeleton/releases/download/2.0.0-beta.1/openapi-service-skeleton-v2.0.0-beta.1.tgz",
+  "openapi-service-skeleton_file": "file:openapi-service-skeleton-v2.0.0-beta.23.tgz",
   "devDependencies": {
-    "@types/chai": "^4.2.18",
     "@types/mocha": "^8.2.2",
-    "@types/node": "^15.0.3",
+    "@types/node": "^15.3.0",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^4.23.0",
     "@typescript-eslint/parser": "^4.23.0",
-    "chai": "^4.3.4",
     "cross-env": "^7.0.3",
-    "esdoc-typescript-plugin": "^1.0.1",
-    "esdoc2": "^2.1.5",
-    "esdoc2-standard-plugin": "^2.1.2",
     "eslint": "^7.26.0",
     "eslint-config-airbnb": "^18.2.1",
-    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-import": "^2.23.0",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.23.2",
     "eslint-plugin-react-hooks": "^4.2.0",
