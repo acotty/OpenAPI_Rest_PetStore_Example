@@ -3,7 +3,6 @@
 // NPM Dependencies
 import bodyParser from "./bodyParser";
 import * as config from "config";
-import * as cookieParser from "cookie-parser";
 import * as skeleton from "openapi-service-skeleton";
 import * as somersault from "somersault";
 import * as winston from "winston";
@@ -175,15 +174,10 @@ const generateInstance = () => skeleton({
   customMiddleware: {
     beforeOpenAPI: [
       beforeOpenAPITest(),
-      cookieParser(),   // for a Keycloak token
       bodyParser(),
     ],
-    // afterOpenAPI: [
-    //   afterOpenAPITest()
-    // ],
-    // errorProcessingNoRoute: [
-    //   errorReqestNotProcessed404()
-    // ],
+    afterOpenAPI: [],
+    processFinalRoutes: [],
   },
   ioc: {
     autoRegister: {
@@ -197,7 +191,6 @@ const generateInstance = () => skeleton({
   },
   service: {
     listenPort: config.get("api.listenPort"),
-    // openapi: serviceContract,
     openapi: customServiceContract,
   },
   exegesisOptions: {
