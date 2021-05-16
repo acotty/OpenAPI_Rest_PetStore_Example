@@ -14,7 +14,7 @@ const app = require('./dist/src');
 const express = require('express');
 const Keycloak = require('keycloak-connect');
 const session = require('express-session');
-const hogan = require('hogan-express');
+const hogan = require('hogan-xpress');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 
