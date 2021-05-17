@@ -5,6 +5,9 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  release:
+    types: 
+      - created
 
 jobs:
   build:
@@ -71,5 +74,6 @@ jobs:
       - name: Run tests against code
         run: yarn test
 
-      - name: Pacakge code
+      - name: Pacakge code on release
+        if: github.event_name == 'release' && github.event.action == 'created'
         run: yarn pack
