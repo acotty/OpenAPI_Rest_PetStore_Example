@@ -39,7 +39,7 @@
     "hogan-xpress": "^2.0.0",
     "json-stringify-safe": "^5.0.1",
     "jsonwebtoken": "^8.5.1",
-    "keycloak-connect": "file:keycloak-connect-v14.0.0-beta.2.tgz",
+    "keycloak-connect": "^13.0.0",
     "lodash": "^4.17.21",
     "moment-timezone": "^0.5.33",
     "mongodb": "^3.6.6",
@@ -55,7 +55,7 @@
     "xlsx": "^0.17.0",
     "yamljs": "^0.3.0"
   },
-  "openapi-service-skeleton_file": "file:openapi-service-skeleton-v2.0.0-beta.23.tgz",
+  "keycloak-connect-local": "file:keycloak-connect-v14.0.0-beta.2.tgz",
   "devDependencies": {
     "@types/mocha": "^8.2.2",
     "@types/node": "^15.3.0",
