@@ -78,7 +78,7 @@ jobs:
           ./WaitKeycloakAppRunning.sh
 
       - name: Run tests against code
-        run: yarn test
+        run: yarn testServer
 
       - name: Package code
         if: github.event_name == 'release' && github.event.action == 'created'
