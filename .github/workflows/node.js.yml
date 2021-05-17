@@ -1,4 +1,4 @@
-name: Node.js CI
+name: NodeJS CI
 
 on:
   push:
@@ -8,7 +8,9 @@ on:
   release:
     types: 
       - created
-
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  
 jobs:
   build:
 
