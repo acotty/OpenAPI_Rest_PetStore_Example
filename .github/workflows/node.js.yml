@@ -37,7 +37,7 @@ jobs:
         run:   |
           docker version
           docker-compose version
-          ls /c:
+          ls /c
           ls '/C/Program Files/Docker/Docker'
           ls -la '/C/Program Files/Docker/Docker/DockerCli.exe'
           '/C/Program Files/Docker/Docker/DockerCli.exe' -SwitchLinuxEngine
