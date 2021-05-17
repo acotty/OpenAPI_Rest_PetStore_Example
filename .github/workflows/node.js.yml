@@ -62,7 +62,6 @@ jobs:
             echo macOS found
           else
             echo "$RUNNER_OS not supported"
-            exit 1
           fi
       
       - name: Wait for docker container apps to finish starting
