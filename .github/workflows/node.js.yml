@@ -29,7 +29,7 @@ jobs:
         # os: [ubuntu-20.04, windows-2019, macos-10.15] - windows-2019 only support windows containers at the moment. No workarround found!!!
         # 
         node-version: [12.x, 14.x, 16.x]
-        os:  [ubuntu-20.04, macos-10.15]
+        os:  [ubuntu-20.04]
 
     steps:
       # - name: Display docerk info
