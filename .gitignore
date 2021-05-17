@@ -109,9 +109,8 @@ typings/
 # Visual Studio Code directory
 # .vscode
 
-# Docker data
-volumes
-portainer_data
+# Docker volume mapped data
+docker_volumes
 
 # application potential specific directories
 dist

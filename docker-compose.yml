@@ -14,7 +14,7 @@ services:
     container_name: mongo
     restart: unless-stopped
     volumes:
-      - ./volumes/mongodb:/data/db
+      - ./docker_volumes/mongodb:/data/db
     ports:
       - 27017:27017
     environment:
@@ -41,7 +41,7 @@ services:
       timeout: 20s
       retries: 10
     volumes:
-      - ./volumes/mariadb-data:/var/lib/mysql
+      - ./docker_volumes/mariadb-data:/var/lib/mysql
     ports:
       - 3306:3306
     networks:
@@ -67,7 +67,7 @@ services:
       timeout: 20s
       retries: 10
     volumes:
-        - C:/docker/volumes/mysql-data:/var/lib/mysql
+        - ./docker_volumes/mysql-data:/var/lib/mysql
     ports:
       - 3306:3306
     cap_add:
@@ -86,7 +86,7 @@ services:
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=hydra
     volumes:
-      - ./volumes/postgressql:/var/lib/postgresql/data
+      - ./docker_volumes/postgressql:/var/lib/postgresql/data
     ports:
         - 5432:5432
     networks:
@@ -115,17 +115,13 @@ services:
     restart: unless-stopped
     # Admin User password: Password01
     volumes:
+      - ./docker_volumes/portainer_data:/data
       # Linux container under linux:
         #- /var/run/docker.sock:/var/run/docker.sock
-        #- ~/code/DataPersistent/portainer_data:/data
       # Linux container under windows:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./volumes/portainer_data:/data
-      #- D:\Temp:/data
-      # Windows container:
       # Windows container:
         #- \\.\pipe\docker_engine:\\.\pipe\docker_engine
-        #-C:\ProgramData\Portainer:C:\data 
     ports:
       - 8000:8000
       - 9000:9000

@@ -26,7 +26,8 @@ jobs:
       fail-fast: false
       matrix:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-        node-version: [12.x, 14.x, 16.x]
+        #node-version: [12.x, 14.x, 16.x]
+        node-version: [16.x]
         os: [ubuntu-20.04, windows-2019, macos-10.15]
 
     steps:
@@ -45,7 +46,7 @@ jobs:
         run: yarn lint
 
       - name: Start MYSQL docker container
-        run: docker-compose up -d portainer mysql
+        run: docker-compose up -d mysql
 
       - name: Sleep for 10s
         uses: juliangruber/sleep-action@v1
@@ -53,7 +54,7 @@ jobs:
           time: 10s
 
       - name: Start keycloak docker container
-        run: docker-compose up -d$(UP) keycloak
+        run: docker-compose up -d keycloak
       
       - name: OS Testing
         shell: bash
