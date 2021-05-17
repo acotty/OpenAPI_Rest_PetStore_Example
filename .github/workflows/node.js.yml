@@ -46,18 +46,7 @@ jobs:
       - name: Lint code 
         run: yarn lint
 
-      - name: Start MYSQL docker container
-        run: docker-compose up -d mysql
-
-      - name: Sleep for 10s
-        uses: juliangruber/sleep-action@v1
-        with:
-          time: 10s
-
-      - name: Start keycloak docker container
-        run: docker-compose up -d keycloak
-      
-      - name: OS Testing
+      - name: Display OS
         shell: bash
         run:   |
           if [ "$RUNNER_OS" == "Linux" ]; then
@@ -70,6 +59,24 @@ jobs:
           else
             echo "$RUNNER_OS not supported"
           fi
+
+      - name: Setup Docker on MACOS
+        if: '$RUNNER_OS' == 'macOS'
+          uses: docker-practice/actions-setup-docker@maste
+          with:
+            docker_channel: test
+            docker_version: "20.10"
+     
+      - name: Start MYSQL docker container
+        run: docker-compose up -d mysql
+
+      - name: Sleep for 10s
+        uses: juliangruber/sleep-action@v1
+        with:
+          time: 10s
+
+      - name: Start keycloak docker container
+        run: docker-compose up -d keycloak
       
       - name: Wait for docker container apps to finish starting
         shell: bash
