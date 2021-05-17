@@ -117,6 +117,3 @@ portainer_data
 dist
 coverage
 test/.temp
-
-# WIP - DO NOT COMMIT YET 
-test
