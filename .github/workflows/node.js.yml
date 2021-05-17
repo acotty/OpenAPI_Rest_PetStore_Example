@@ -61,11 +61,10 @@ jobs:
           fi
 
       - name: Setup Docker on MACOS
-        if: '$RUNNER_OS' == 'macOS'
-          uses: docker-practice/actions-setup-docker@maste
-          with:
-            docker_channel: test
-            docker_version: "20.10"
+        uses: docker-practice/actions-setup-docker@maste
+        with:
+          docker_channel: test
+          docker_version: "20.10"
      
       - name: Start MYSQL docker container
         run: docker-compose up -d mysql
