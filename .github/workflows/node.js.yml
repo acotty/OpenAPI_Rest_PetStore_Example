@@ -33,16 +33,19 @@ jobs:
 
     steps:
       - name: Display OS
-        shell: bash
         run:   |
           docker version
           docker-compose version
-          ls /c
-          ls '/C/Program Files/Docker/Docker'
-          ls -la '/C/Program Files/Docker/Docker/DockerCli.exe'
-          '/C/Program Files/Docker/Docker/DockerCli.exe' -SwitchLinuxEngine
-          docker version
-          docker-compose version
+          dir 'c:\Program Files\*'
+          dir 'c:\Program Files\D*'
+          dir 'c:\Program Files\Docker\*'
+          dir 'c:\Program Files\Docker\Docker\*'
+          dir 'c:\Program Files\Docker\Docker\DockerCli.exe'
+          dir DockerCli.exe /s
+
+# '/C/Program Files/Docker/Docker/DockerCli.exe' -SwitchLinuxEngine
+# docker version
+# docker-compose version
 
     #   - name: Checkout GIThub code
     #     uses: actions/checkout@v2
