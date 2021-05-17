@@ -53,18 +53,18 @@ jobs:
             echo Linux OS found
           elif [ "$RUNNER_OS" == "Windows" ]; then
             echo Windows OS found
-            dir C:\msys64
           elif [ "$RUNNER_OS" == "macOS" ]; then
             echo macOS found
           else
             echo "$RUNNER_OS not supported"
           fi
 
-      - name: Setup Docker on MACOS
+      - name: Setup Docker on macOS
         uses: docker-practice/actions-setup-docker@master
         with:
           docker_channel: test
           docker_version: "20.10"
+          docker_buildx: false
      
       - name: Start MYSQL docker container
         run: docker-compose up -d mysql
