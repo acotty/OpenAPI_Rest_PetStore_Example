@@ -1,0 +1,75 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    name: Run tests for NodeJS version ${{ matrix.node-version }} on @ ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    timeout-minutes: 30   # Just in case something goes realy real realy BAD.....
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [10.x, 12.x, 14.x, 16.x]
+        os: [ubuntu-20.04, windows-2019, macos-10.15]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile   # will run `yarn install --frozen-lockfile` command
+
+      - name: Lint code 
+        run: yarn lint
+
+      - name: Start MYSQL docker container
+        run: docker-compose up -d portainer mysql
+
+      - name: Sleep for 10s
+        uses: juliangruber/sleep-action@v1
+        with:
+          time: 10s
+
+      - name: Start keycloak docker container
+        run: docker-compose up -d$(UP) keycloak
+      
+      - name: OS Testing
+        shell: bash
+        run:   |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            echo Linux OS found
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            echo Windows OS found
+            dir C:\msys64
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            echo macOS found
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
+      
+      - name: Wait for docker container apps to finish starting
+        shell: bash
+        run: |
+          chmod +x ./WaitKeycloakAppRunning.sh
+          ./WaitKeycloakAppRunning.sh
+
+      - name: Run tests against code
+        run: yarn test
+
+      - name: Pacakge code
+        run: yarn pack

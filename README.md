@@ -1,5 +1,13 @@
 # OpenAPI RestAPI PetStore Example
 
+[![Prod Dependencies](https://david-dm.org/acotty/OpenAPI_Rest_PetStore_Example/status.svg)](https://david-dm.org/acotty/OpenAPI_Rest_PetStore_Example)
+
+[![Dev Dependencies](https://david-dm.org/acotty/OpenAPI_Rest_PetStore_Example/dev-status.svg)](https://david-dm.org/acotty/OpenAPI_Rest_PetStore_Example#info=devDependencies)
+
+[![Build](https://github.com/acotty/OpenAPI_Rest_PetStore_Example/actions/workflows/node.js.yml/badge.svg)](https://github.com/acotty/OpenAPI_Rest_PetStore_Example/actions/workflows/node.js.yml)
+
+[![Build Matrix](http://github-actions.40ants.com/acotty/OpenAPI_Rest_PetStore_Example/matrix.svg)](https://github.com/acotty/OpenAPI_Rest_PetStore_Example)
+
 Rest data service example.
 
 ## Windows /MAC Start
