@@ -29,63 +29,72 @@ jobs:
         # node-version: [12.x, 14.x, 16.x]
         # os: [ubuntu-20.04, windows-2019, macos-10.15]
         node-version: [16.x]
-        os: [windows-2019, macos-10.15]
+        os: [windows-2019]
 
     steps:
-      - name: Checkout GIThub code
-        uses: actions/checkout@v2
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile   # will run `yarn install --frozen-lockfile` command
-
-      - name: Lint code 
-        run: yarn lint
-
       - name: Display OS
         shell: bash
         run:   |
-          if [ "$RUNNER_OS" == "Linux" ]; then
-            echo Linux OS found
-          elif [ "$RUNNER_OS" == "Windows" ]; then
-            echo Windows OS found
-          elif [ "$RUNNER_OS" == "macOS" ]; then
-            echo macOS found
-          else
-            echo "$RUNNER_OS not supported"
-          fi
+          docker --version
+          docker-compose --version
+          DockerCli.exe -SwitchLinuxEngine
+          docker --version
+          docker-compose --version
 
-      - name: Setup Docker on macOS
-        uses: docker-practice/actions-setup-docker@master
-        with:
-          docker_channel: test
-          docker_version: "20.10"
-          docker_buildx: false
+    #   - name: Checkout GIThub code
+    #     uses: actions/checkout@v2
+
+    #   - name: Use Node.js ${{ matrix.node-version }}
+    #     uses: actions/setup-node@v2
+    #     with:
+    #       node-version: ${{ matrix.node-version }}
+
+    #   - name: Install dependencies
+    #     run: yarn install --frozen-lockfile   # will run `yarn install --frozen-lockfile` command
+
+    #   - name: Lint code 
+    #     run: yarn lint
+
+    #   - name: Display OS
+    #     shell: bash
+    #     run:   |
+    #       if [ "$RUNNER_OS" == "Linux" ]; then
+    #         echo Linux OS found
+    #       elif [ "$RUNNER_OS" == "Windows" ]; then
+    #         echo Windows OS found
+    #       elif [ "$RUNNER_OS" == "macOS" ]; then
+    #         echo macOS found
+    #       else
+    #         echo "$RUNNER_OS not supported"
+    #       fi
+
+    #   - name: Setup Docker on macOS
+    #     uses: docker-practice/actions-setup-docker@master
+    #     with:
+    #       docker_channel: test
+    #       docker_version: "20.10"
+    #       docker_buildx: false
      
-      - name: Start MYSQL docker container
-        run: docker-compose up -d mysql
+    #   - name: Start MYSQL docker container
+    #     run: docker-compose up -d mysql
 
-      - name: Sleep for 10s
-        uses: juliangruber/sleep-action@v1
-        with:
-          time: 10s
+    #   - name: Sleep for 10s
+    #     uses: juliangruber/sleep-action@v1
+    #     with:
+    #       time: 10s
 
-      - name: Start keycloak docker container
-        run: docker-compose up -d keycloak
+    #   - name: Start keycloak docker container
+    #     run: docker-compose up -d keycloak
       
-      - name: Wait for docker container apps to finish starting
-        shell: bash
-        run: |
-          chmod +x ./WaitKeycloakAppRunning.sh
-          ./WaitKeycloakAppRunning.sh
+    #   - name: Wait for docker container apps to finish starting
+    #     shell: bash
+    #     run: |
+    #       chmod +x ./WaitKeycloakAppRunning.sh
+    #       ./WaitKeycloakAppRunning.sh
 
-      - name: Run tests against code
-        run: yarn test
+    #   - name: Run tests against code
+    #     run: yarn test
 
-      - name: Package code
-        if: github.event_name == 'release' && github.event.action == 'created'
-        run: yarn pack
+    #   - name: Package code
+    #     if: github.event_name == 'release' && github.event.action == 'created'
+    #     run: yarn pack
