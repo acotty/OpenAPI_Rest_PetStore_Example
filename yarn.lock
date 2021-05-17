@@ -4314,7 +4314,7 @@ jwa@^1.4.1:
     ecdsa-sig-formatter "1.0.11"
     safe-buffer "^5.0.1"
 
-jwk-to-pem@^2.0.5:
+jwk-to-pem@^2.0.0:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/jwk-to-pem/-/jwk-to-pem-2.0.5.tgz#151310bcfbcf731adc5ad9f379cbc8b395742906"
   integrity sha512-L90jwellhO8jRKYwbssU9ifaMVqajzj3fpRjDKcsDzrslU9syRbFqfkXtT4B89HYAap+xsxNcxgBSB09ig+a7A==
@@ -4331,26 +4331,14 @@ jws@3.x.x, jws@^3.2.2:
     jwa "^1.4.1"
     safe-buffer "^5.0.1"
 
-keycloak-admin-client@bucharest-gold/keycloak-admin-client:
-  version "0.12.0"
-  resolved "https://codeload.github.com/bucharest-gold/keycloak-admin-client/tar.gz/eb75ad219dfc6aa14fe8c976647b9c017502458d"
+keycloak-connect@^13.0.0:
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/keycloak-connect/-/keycloak-connect-13.0.0.tgz#95bcb96627b04abc282b563a0b897aa79002fa44"
+  integrity sha512-OdCy9KQ7v+c46Q2JlZWHBvvL58XkFanF7w+Expmt9TfDAWIe1ZMdmoSzxvU8Orz+GQO3BaBSRNv0WCwI+1sXTg==
   dependencies:
-    keycloak-request-token "^0.1.0"
-    request "^2.69.0"
-
-"keycloak-connect@file:keycloak-connect-v14.0.0-beta.2.tgz":
-  version "14.0.0-beta.2"
-  resolved "file:keycloak-connect-v14.0.0-beta.2.tgz#a9e8f7b0a04610c7e3315730d33bd371cea2ce0d"
-  dependencies:
-    jwk-to-pem "^2.0.5"
-    keycloak-admin-client bucharest-gold/keycloak-admin-client
+    jwk-to-pem "^2.0.0"
   optionalDependencies:
     chromedriver latest
-
-keycloak-request-token@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/keycloak-request-token/-/keycloak-request-token-0.1.0.tgz#919d1ac46237db568d4d45322a213cee2636e2a8"
-  integrity sha1-kZ0axGI321aNTUUyKiE87iY24qg=
 
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.1.0, kind-of@^3.2.0:
   version "3.2.2"
@@ -5988,7 +5976,7 @@ request-data@^1.4.1:
   resolved "https://registry.yarnpkg.com/request-data/-/request-data-1.4.1.tgz#3f38ea4580cbac24b9fe0d15d93b13e31b854311"
   integrity sha512-N1bVI/9mlktOYCyLl76HRbA36xakR2puU6V5iq5ndHlZumErkWVtxQAYOyImDaJLWxMWenWMs4qr2nW/5XuIjg==
 
-"request@>= 2.52.0", request@^2.69.0:
+"request@>= 2.52.0":
   version "2.88.2"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.2.tgz#d73c918731cb5a87da047e207234146f664d12b3"
   integrity sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==
