@@ -8,7 +8,7 @@
 
 [![Build Matrix](http://github-actions.40ants.com/acotty/OpenAPI_Rest_PetStore_Example/matrix.svg)](https://github.com/acotty/OpenAPI_Rest_PetStore_Example)
 
-Rest data service example.
+OpenAPI 3.0 restAPI petstore data service example.
 
 ## Windows /MAC Start
 
