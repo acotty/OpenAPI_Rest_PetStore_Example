@@ -41,11 +41,14 @@
     "dist/src/**/*.js"
   ],
   "exclude": [
-    "src/contract/*.js",
     "dist/src/contract/*.js",
     "dist/src/schemas/*.js",
     "dist/src/interfaces/*.js",
     "dist/src/controllers/metadata.js",
-    "**/**/*.spec.js"
+    "**/**/*.spec.js",
+    "docker_volumes",
+    "config",
+    "DB_Setup",
+    "public"
   ]
 }
