@@ -35,11 +35,14 @@ jobs:
       - name: Display OS
         shell: bash
         run:   |
-          docker --version
-          docker-compose --version
-          C:/Program Files/Docker/Docker/DockerCli.exe -SwitchLinuxEngine
-          docker --version
-          docker-compose --version
+          docker version
+          docker-compose version
+          ls /c:
+          ls '/C/Program Files/Docker/Docker'
+          ls -la '/C/Program Files/Docker/Docker/DockerCli.exe'
+          '/C/Program Files/Docker/Docker/DockerCli.exe' -SwitchLinuxEngine
+          docker version
+          docker-compose version
 
     #   - name: Checkout GIThub code
     #     uses: actions/checkout@v2
