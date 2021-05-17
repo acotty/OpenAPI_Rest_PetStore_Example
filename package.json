@@ -12,10 +12,11 @@
     "run": "node index",
     "start": "./node_modules/.bin/gulp clean && yarn run server-build && node index",
     "lint": "./node_modules/.bin/eslint *.js src/**/*.ts test/**/*.ts",
-    "test": "yarn run server-test",
+    "test": "./node_modules/.bin/nyc ./node_modules/.bin/mocha",
+    "test2": "yarn run server-test",
     "post-install": "yarn run server-build",
     "server-test": "yarn run server-build && cross-env NODE_ENV=test ./node_modules/.bin/nyc ./node_modules/.bin/mocha --timeout 120000",
-    "testServer": "./node_modules/.bin/cross-env NODE_ENV=test ./node_modules/.bin/nyc ./node_modules/.bin/mocha --timeout 120000",
+    "testServer": "./node_modules/.bin/cross-env NODE_ENV=test ./node_modules/.bin/nyc ./node_modules/.bin/mocha",
     "server-build": "./node_modules/.bin/tsc -p ./tsconfig.json",
     "test:coverage": "./node_modules/.bin/nyc report"
   },
