@@ -54,20 +54,17 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ChangeMe
       # MYSQL_ROOT_HOST: "%"
-      #MYSQL_USER: test
-      #MYSQL_PASSWORD: password
-      #MYSQL_DATABASE: keycloak
-      #mysql script:  see MySQL_Setup_Script.sql file
-      MYSQL_USER: keycloak
+      MYSQL_USER: test
       MYSQL_PASSWORD: password
-      MYSQL_DATABASE: keycloak
     healthcheck:
       test: "mysqladmin ping -u root -p$${MYSQL_ROOT_PASSWORD}"
       start_period: 10s
       timeout: 20s
       retries: 10
     volumes:
-        - ./docker_volumes/mysql-data:/var/lib/mysql
+      - ./docker_volumes/mysql-data:/var/lib/mysql
+      # See *.sql scripts in ./MYSQL_DB_Setup/DockerSartupScripts that are run on the container creation
+      - ./MYSQL_DB_Setup/DockerSartupScripts:/docker-entrypoint-initdb.d
     ports:
       - 3306:3306
     cap_add:
@@ -109,19 +106,14 @@ services:
     logging: *default-logging      
     
   portainer:
-    image: portainer/portainer-ce:2.1.1-alpine
+    image: portainer/portainer-ce:2.5.0-alpine
     hostname: portainer
     container_name: portainer
     restart: unless-stopped
     # Admin User password: Password01
     volumes:
       - ./docker_volumes/portainer_data:/data
-      # Linux container under linux:
-        #- /var/run/docker.sock:/var/run/docker.sock
-      # Linux container under windows:
       - /var/run/docker.sock:/var/run/docker.sock
-      # Windows container:
-        #- \\.\pipe\docker_engine:\\.\pipe\docker_engine
     ports:
       - 8000:8000
       - 9000:9000

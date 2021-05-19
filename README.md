@@ -30,7 +30,7 @@ TBA
 make up
 ```
 
-SQL Configuration: TBA
+The MySQL databse is configured by the docker vomule mapping './MYSQL_DB_Setup/DockerSartupScripts:/docker-entrypoint-initdb.d', which when the docker container is created runs the *.sql scripts in the mapped directory './MYSQL_DB_Setup/DockerSartupScripts'. More details can be found on the <https://hub.docker.com/_/mysql/> web page.
 
 ### Install node moodule dependencies
 

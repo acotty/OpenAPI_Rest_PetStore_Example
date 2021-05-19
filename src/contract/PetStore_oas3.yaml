@@ -162,7 +162,6 @@ paths:
           in: query
           description: Status values that need to be considered for filter
           required: false
-          explode: true
           schema:
             type: string
             enum:
@@ -219,7 +218,6 @@ paths:
           in: query
           description: Tags to filter by
           required: true
-          explode: true
           schema:
             type: array
             items:
@@ -755,7 +753,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /user/login:
+  /user/login/{username}/{password}:
     x-exegesis-controller: user
     get:
       tags:
@@ -766,15 +764,15 @@ paths:
       #security: # No additional security for this API, so uses global security settings
       parameters:
         - name: username
-          in: query
+          in: path
           description: The user name for login
-          required: false
+          required: true
           schema:
             type: string
         - name: password
-          in: query
+          in: path
           description: The password for login in clear text
-          required: false
+          required: true
           schema:
             type: string
       responses:
