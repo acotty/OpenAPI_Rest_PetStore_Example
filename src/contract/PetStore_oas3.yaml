@@ -377,10 +377,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '#/components/schemas/Pet'
             application/x-www-form-urlencoded:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '#/components/schemas/Pet'
         '400':
           description: Invalid pet value
           x-gulp-openapi-code-generator-outcome: badRequestError
@@ -441,10 +441,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '#/components/schemas/Pet'
             application/x-www-form-urlencoded:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: '#/components/schemas/Pet'
         '400':
           description: Invalid ID supplied
           x-gulp-openapi-code-generator-outcome: badRequestError
@@ -1377,7 +1377,7 @@ components:
     Pet:
       required:
         - name
-        - photoUrls
+        - status
       properties:
         id:
           type: integer
@@ -1411,21 +1411,9 @@ components:
             - available
             - pending
             - sold
+            - unknown
       xml:
         name: pet
-      type: object
-
-    ApiResponse:
-      properties:
-        code:
-          type: integer
-          format: int32
-        type:
-          type: string
-        message:
-          type: string
-      xml:
-        name: '##default'
       type: object
 
     LogMessageEntry:

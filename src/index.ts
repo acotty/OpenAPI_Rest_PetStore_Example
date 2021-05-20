@@ -67,7 +67,7 @@ function CreateORMConnection() {
       Tag,
       User,
     ],
-    synchronize: false,   // True - create tables if they do not exist.
+    synchronize: true,   // True - create tables if they do not exist.
     logging: false
   })
   .then((connection) => {
@@ -209,31 +209,19 @@ const generateInstance = () => {
     .then((app) => {
       app.CloseExpress = app.close;
       app.close = async function closeServer() {
-        debugger;
-        console.log(`CLOSE Line 214`);
         await connection.close();   // Close typeorm connection(s)
         await app.CloseExpress();       // Close Express
       };
       return app;
     }).catch((error) => {
-      debugger;
       throw error;
     });
   })
   .catch((error) => {
-    debugger;
     throw error;
   });
 };
 
-function bootstrap() {
-  // container.register("dealerService", new DealerService());
-  log.info("Petstore RestAPI Service up");
-  return Promise.resolve();
-}
-
 module.exports = {
-  bootstrap: bootstrap(),
-  container,
   generateInstance
 };

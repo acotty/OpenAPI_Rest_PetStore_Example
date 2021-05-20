@@ -23,7 +23,9 @@ class Pet extends BaseEntity {
   @Column()
   name: string;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   photoUrls: string;
 
   @Column()
