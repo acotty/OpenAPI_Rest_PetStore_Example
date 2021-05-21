@@ -4,7 +4,11 @@ export const PET_ID_10 = {
   name: "doggie_10",
   //category: {},
   photoUrls: [""],
-  //tags: [{}],
+  tags: [
+    {
+      name: "TAG_Test_10"
+    }
+  ],
   status: "available"
 };
 

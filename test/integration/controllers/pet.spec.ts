@@ -10,6 +10,7 @@ import * as path from "path";
 import * as mockPet from "../../MockData/mockPet";
 import * as chalk from "chalk";
 import * as diff from "diff";
+import { expect } from "chai";
 
 const emptyStub   =  { };
 const pathDistDirectory = path.join(appRoot.toString(), "dist/src");
@@ -50,13 +51,75 @@ function checkJsonAfterPurge(requestJson, expectedJSON) {
         process.stderr.write(chalk.grey(part.value));
       }
     });
+    debugger;
     throw new Error(`Request body does not match expected result.`);
-
   }
 }
 
+function getPetsAfterTagIDCheck(resultJson, expectedJson) {
+  if ((!Object.prototype.hasOwnProperty.call(resultJson, 'tags')) || (!Object.prototype.hasOwnProperty.call(expectedJson, 'tags'))) {
+    if (Object.prototype.hasOwnProperty.call(resultJson, 'tags')) {
+      delete resultJson['tags'];
+    }
+    if (Object.prototype.hasOwnProperty.call(expectedJson, 'tags')) {
+      delete expectedJson['tags'];
+    }
+    return;
+  }
 
+  if ( (Object.prototype.hasOwnProperty.call(resultJson, 'tags')) && (Object.prototype.hasOwnProperty.call(expectedJson, 'tags'))) {
+    if (resultJson.tags.length === 0) {
+      delete resultJson['tags'];
+    } else if (Object.prototype.hasOwnProperty.call(resultJson.tags[0], 'id')) {
+        delete resultJson.tags['id'];
+    }
 
+    if (expectedJson.tags.length === 0) {
+      delete resultJson['tags'];
+    } else if (Object.prototype.hasOwnProperty.call(expectedJson.tags[0], 'id')) {
+      delete expectedJson.tags[0]['id'];
+    }
+    return;
+  }
+
+  if (
+    (
+      (
+        ! Object.prototype.hasOwnProperty.call(resultJson, 'tags')
+        ||
+        resultJson.tags === null
+        ||
+        resultJson.tags === [{}]
+      )
+      ||
+      (
+        Object.prototype.hasOwnProperty.call(resultJson, 'tags')
+        &&
+        !Object.prototype.hasOwnProperty.call(resultJson.tags[0], 'id')
+      )
+    )
+    &&
+    Object.prototype.hasOwnProperty.call(expectedJson, 'tags')
+  ) {
+    if (Object.prototype.hasOwnProperty.call(resultJson, 'tags')) {
+      delete resultJson['tags'];
+    }
+    if (Object.prototype.hasOwnProperty.call(expectedJson, 'tags')) {
+      delete expectedJson['tags'];
+    }
+  }
+}
+
+function checkResResponseBodyAfterPurge(resultStatus, expectedStatus, resultJson, expectedJson) {
+  if (resultStatus != expectedStatus) {
+    debugger;
+    console.error(chalk.red(`resultJson: ${JSON.stringify(resultJson, null, 2)}`));
+    expect(resultStatus).to.equal(expectedStatus);
+  } else {
+    getPetsAfterTagIDCheck(expectedJson, resultJson);
+    checkJsonAfterPurge(expectedJson, resultJson);
+  }
+}
 
 describe("Pet Controller Tests", () => {
   let instance = null;
@@ -85,14 +148,8 @@ describe("Pet Controller Tests", () => {
       .expect('Content-Type', /json/)
       .send(petJsonTest)
       .expect( (res) => {
-        if (res.status != 200) {
-          console.error(chalk.red(`res.text: ${JSON.stringify(res.text, null, 2)}`));
-          console.error(chalk.red(`res.body: ${JSON.stringify(res.body, null, 2)}`));
-        } else {
-          checkJsonAfterPurge(petJsonTest, res.body);
-        }
+        checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest);
       })
-      .expect(200)
       .catch((error) => {
         debugger;
         throw error;
@@ -108,14 +165,165 @@ describe("Pet Controller Tests", () => {
       .expect('Content-Type', /json/)
       .send(petJsonTest)
       .expect( (res) => {
-        if (res.status != 200) {
-          console.error(chalk.red(`res.text: ${JSON.stringify(res.text, null, 2)}`));
-          console.error(chalk.red(`res.body: ${JSON.stringify(res.body, null, 2)}`));
-        } else {
-          checkJsonAfterPurge(petJsonTest, res.body);
-        }
+        checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest);
       })
-      .expect(200)
+      .catch((error) => {
+        debugger;
+        throw error;
+      })
+  });
+
+  it("PET PUT - Add and update new pet id#12 to the petstore", () => {
+    const testRequest = request('http://localhost:10010');
+    const petJsonTest = JSON.parse(JSON.stringify(mockPet.PET_ID_11));
+    petJsonTest.id = 12;
+    petJsonTest.name = 'doggie_12';
+
+    return testRequest
+      .post(`/pet`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send(petJsonTest)
+      .expect( (res) => {
+        checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest);
+      })
+      .then(() => {
+        petJsonTest.name = 'doggie_12Update';
+        return testRequest
+          .put(`/pet`)
+          .set('Accept', 'application/json')
+          .expect('Content-Type', /json/)
+          .send(petJsonTest)
+          .expect( (res) => {
+            checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest);
+        })
+      })
+      .catch((error) => {
+        debugger;
+        throw error;
+      })
+  });
+
+  it("PET GET - Get pet by ID #11 from the petstore", () => {
+    const petJsonTest = JSON.parse(JSON.stringify(mockPet.PET_ID_11));
+
+    return request('http://localhost:10010')
+      .get(`/pet/${petJsonTest.id}`)
+      .set('Accept', 'application/json')
+      .expect( (res) => {
+        checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest);
+      })
+      .catch((error) => {
+        debugger;
+        throw error;
+      })
+  });
+
+  it("PET GET findByStatus - Get pet(s) by Status from the petstore", () => {
+    const petJsonTest10 = JSON.parse(JSON.stringify(mockPet.PET_ID_10));
+    const petJsonTest11 = JSON.parse(JSON.stringify(mockPet.PET_ID_11));
+
+    return request('http://localhost:10010')
+      .get(`/pet/findByStatus`)
+      .query({status : petJsonTest10.status})
+      .set('Accept', 'application/json')
+      .expect( (res) => {
+        checkResResponseBodyAfterPurge(res.status, 200, res.body[0], petJsonTest10);
+        checkResResponseBodyAfterPurge(res.status, 200, res.body[1], petJsonTest11);
+      })
+      .catch((error) => {
+        debugger;
+        throw error;
+      })
+  });
+
+  it("PET GET findPetsByTags - Get pet(s) by Tags from the petstore", () => {
+    const testRequest = request('http://localhost:10010');
+
+    const petJsonTest20 = JSON.parse(JSON.stringify(mockPet.PET_ID_10));
+    const petJsonTest21 = JSON.parse(JSON.stringify(mockPet.PET_ID_11));
+
+    petJsonTest20.id = 20;
+    petJsonTest21.id = 21;
+    petJsonTest20.name = 'doggie_20';
+    petJsonTest21.name = 'doggie_21';
+    petJsonTest20.tags =  [
+      {
+        "name" : "tag20"
+      },
+      {
+        "name" : "both"
+      }
+    ];
+    petJsonTest21.tags =  [
+      {
+        "name" : "tag21"
+      },
+      {
+        "name" : "both"
+      }
+    ];
+
+    return testRequest
+      .post(`/pet`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send(petJsonTest20)
+      .expect( (res) => {
+        checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest20);
+      })
+      .then(() => {
+        return testRequest
+        .post(`/pet`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .send(petJsonTest21)
+        .expect( (res) => {
+          checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest21);
+        })
+      })
+      .then(() => {
+        return testRequest
+        .get(`/pet/findByTags`)
+        .query({tags : ['noGoodTagFound']})
+        .set('Accept', 'application/json')
+        .expect( (res) => {
+          expect(res.status).to.equal(200);
+          expect(res.body.length).to.equal(0);
+        })
+      })
+      .then(() => {
+        return testRequest
+        .get(`/pet/findByTags`)
+        .query({tags : ['tag20']})
+        .set('Accept', 'application/json')
+        .expect( (res) => {
+          expect(res.body.length).to.equal(1);
+          checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest20);
+        })
+      })
+      .then(() => {
+        return testRequest
+        .get(`/pet/findByTags`)
+        .query({tags : ['tag21']})
+        .set('Accept', 'application/json')
+        .expect( (res) => {
+          expect(res.body.length).to.equal(1);
+          checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest21);
+        })
+      })
+      .then(() => {
+        return testRequest
+        .get(`/pet/findByTags`)
+        .query({tags : ['both']})
+        .set('Accept', 'application/json')
+        .expect( (res) => {
+          expect(res.status).to.equal(200);
+          expect(res.body.length).to.equal(2);
+          checkResResponseBodyAfterPurge(res.status, 200, res.body[0], petJsonTest20);
+          checkResResponseBodyAfterPurge(res.status, 200, res.body[1], petJsonTest21);
+        })
+      })
       .catch((error) => {
         debugger;
         throw error;
@@ -131,14 +339,8 @@ describe("Pet Controller Tests", () => {
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect( (res) => {
-        if (res.status != 200) {
-          console.error(chalk.red(`res.text: ${JSON.stringify(res.text, null, 2)}`));
-          console.error(chalk.red(`res.body: ${JSON.stringify(res.body, null, 2)}`));
-        } else {
-          checkJsonAfterPurge(petJsonTestResult, res.body);
-        }
+        checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTestResult);
       })
-      .expect(200)
       .catch((error) => {
         debugger;
         throw error;
@@ -146,3 +348,13 @@ describe("Pet Controller Tests", () => {
   });
 
 });
+
+
+
+// 	SELECT * FROM petstore.pets p;
+// 	SELECT * FROM petstore.tags p ;
+
+// /*
+// drop table petstore.pets;
+// drop table petstore.tags;
+// */

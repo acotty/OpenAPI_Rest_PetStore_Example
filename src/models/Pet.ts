@@ -3,8 +3,8 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
+  //CreateDateColumn,
+  //UpdateDateColumn,
   OneToOne,
   OneToMany,
   JoinColumn
@@ -37,7 +37,7 @@ class Pet extends BaseEntity {
 
   @OneToOne(type => Tag)
   @JoinColumn()
-  tagID: Tag;
+  tags: Tag;
 
   @OneToOne(type => User)
   @JoinColumn()

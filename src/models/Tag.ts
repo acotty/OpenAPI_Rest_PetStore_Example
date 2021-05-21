@@ -3,8 +3,11 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
+  //CreateDateColumn,
+  //UpdateDateColumn,
+  //OneToOne,
+  //OneToMany,
+  //JoinColumn
 } from "typeorm";
 
 @Entity("tags")

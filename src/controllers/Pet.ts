@@ -1,5 +1,6 @@
 import { getRepository } from "typeorm";
 import mPet from "../models/Pet";
+import mTag from "../models/Tag";
 // import iPet from "../interfaces/Pet";
 // import * as _ from "lodash";
 
@@ -29,17 +30,44 @@ export class PetController {
     const pet = new mPet();
     const petJson = JSON.parse(JSON.stringify(typedRequestBodyParam));
 
-    return petRepository
-      .save({
-        ...pet,
-        ...petJson,
-      })
-      .then( (result) => {
-        return responder.success(result);
-      })
-      .catch( (error) => {
-        return responder.serverError(error);
-      });
+    if (!Object.prototype.hasOwnProperty.call(petJson, 'tags') || (petJson.tags.length === 0)) {
+      return petRepository
+        .save({
+          ...pet,
+          ...petJson,
+        })
+        .then( (resultPet) => {
+          return responder.success(resultPet);
+        })
+        .catch( (error) => {
+          return responder.serverError(error);
+        });
+
+    } else {
+      const tagRepository = getRepository(mTag);
+      const tag = new mTag();
+      const tagJson = JSON.parse(JSON.stringify(typedRequestBodyParam.tags[0]));
+
+      return tagRepository
+        .save({
+          ...tag,
+          ...tagJson,
+        })
+        .then( (resultTag) => {
+          petJson.tagsId = resultTag.id;
+          return petRepository
+          .save({
+            ...pet,
+            ...petJson,
+          })
+        })
+        .then( (resultPet) => {
+          return responder.success(resultPet);
+        })
+        .catch( (error) => {
+          return responder.serverError(error);
+        });
+    }
   }
 
   public updatePet(typedRequestBodyParam, responder) {
@@ -62,14 +90,22 @@ export class PetController {
       });
   }
 
-  private findPet(typedRequestBodyParam, responder) {
+  private findPet(typedRequestBodyParam, expectedMultipePets, responder) {
     const petRepository = getRepository(mPet);
     const findPetJson = JSON.parse(JSON.stringify(typedRequestBodyParam));
 
     return petRepository
       .find(findPetJson)
       .then( (petFound) => {
-        return responder.success(petFound);
+        if (expectedMultipePets === false) {
+          if (petFound.length == 1) {
+            return responder.success(petFound[0]);
+          } else {
+            return responder.serverError(new Error(`Expected one pet from the DB, but DB returned muliple - ${petFound.length}`));
+          }
+        } else {
+          return responder.success(petFound);
+        }
       })
       .catch( (error) => {
         return responder.serverError(error);
@@ -77,15 +113,15 @@ export class PetController {
   }
 
   public findPetsByStatus(statusParam, responder) {
-    return this.findPet({ status: statusParam}, responder);
+    return this.findPet({ status: statusParam}, true, responder);
   }
 
-  public findPetsByTags(typedRequestBodyParam, responder) {
-    return this.findPet(typedRequestBodyParam, responder);
+  public findPetsByTags(typedRequestBodyParams, responder) {
+    return this.findPet({ tags: typedRequestBodyParams}, true, responder);
   }
 
   public getPetById(idParam, responder) {
-    return this.findPet({ id: idParam}, responder);
+    return this.findPet({ id: idParam}, false, responder);
   }
 
   public updatePetWithForm(typedRequestBodyParam, responder) {
