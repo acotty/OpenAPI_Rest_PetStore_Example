@@ -38,7 +38,7 @@ function checkJsonAfterPurge(requestJson, expectedJSON) {
   if (!fdequal(requestJsonPurged, expectedJSONPurged)) {
     console.error(chalk.red(`Request body does not match expected result.`));
     console.error(chalk.yellow(`Request body : ${JSON.stringify(requestJson, null, 2)}`));
-    console.error(chalk.yellow(`Expected data: ${JSON.stringify(expectedJSON, null, 2)}`));
+    console.error(chalk.yellowBright(`Expected data: ${JSON.stringify(expectedJSON, null, 2)}`));
 
     console.error(chalk.red(`Differences are (green add, red removed, gray same):`));
     const differences = diff.diffJson(requestJson, expectedJSON);
@@ -70,14 +70,22 @@ function getPetsAfterTagIDCheck(resultJson, expectedJson) {
   if ( (Object.prototype.hasOwnProperty.call(resultJson, 'tags')) && (Object.prototype.hasOwnProperty.call(expectedJson, 'tags'))) {
     if (resultJson.tags.length === 0) {
       delete resultJson['tags'];
-    } else if (Object.prototype.hasOwnProperty.call(resultJson.tags[0], 'id')) {
-        delete resultJson.tags['id'];
+    } else {
+      for (let index = 0; index < resultJson.tags.length; index += 1) {
+        if (Object.prototype.hasOwnProperty.call(resultJson.tags[index], 'id')) {
+          delete resultJson.tags[index]['id'];
+        }
+      }
     }
 
     if (expectedJson.tags.length === 0) {
       delete resultJson['tags'];
-    } else if (Object.prototype.hasOwnProperty.call(expectedJson.tags[0], 'id')) {
-      delete expectedJson.tags[0]['id'];
+    } else {
+      for (let index = 0; index < expectedJson.tags.length; index += 1) {
+        if (Object.prototype.hasOwnProperty.call(expectedJson.tags[index], 'id')) {
+          delete expectedJson.tags[index]['id'];
+        }
+      }
     }
     return;
   }
@@ -237,7 +245,7 @@ describe("Pet Controller Tests", () => {
       })
   });
 
-  it("PET GET findPetsByTags - Get pet(s) by Tags from the petstore", () => {
+  it.only("PET GET findPetsByTags - Get pet(s) by Tags from the petstore", () => {
     const testRequest = request('http://localhost:10010');
 
     const petJsonTest20 = JSON.parse(JSON.stringify(mockPet.PET_ID_10));

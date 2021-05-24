@@ -1,3 +1,5 @@
+/* eslint-disable no-debugger */
+
 import { getRepository } from "typeorm";
 import mPet from "../models/Pet";
 import mTag from "../models/Tag";
@@ -40,31 +42,34 @@ export class PetController {
           return responder.success(resultPet);
         })
         .catch( (error) => {
+          debugger;
           return responder.serverError(error);
         });
 
     } else {
       const tagRepository = getRepository(mTag);
-      const tag = new mTag();
-      const tagJson = JSON.parse(JSON.stringify(typedRequestBodyParam.tags[0]));
+      const tagsArray: mTag[] = [];
+
+      for (let index = 0; index < typedRequestBodyParam.tags.length; index += 1) {
+        const tag = new mTag();
+        tag.name = typedRequestBodyParam.tags[index].name;
+        if (Object.prototype.hasOwnProperty.call(typedRequestBodyParam.tags[index], 'id')) {
+          tag.id = typedRequestBodyParam.tags[index].id;
+        }
+        tagsArray.push(tag);
+      }
 
       return tagRepository
-        .save({
-          ...tag,
-          ...tagJson,
-        })
-        .then( (resultTag) => {
-          petJson.tagsId = resultTag.id;
+        .save(tagsArray)
+        .then( () => {
           return petRepository
-          .save({
-            ...pet,
-            ...petJson,
-          })
+            .save(petJson)
         })
         .then( (resultPet) => {
           return responder.success(resultPet);
         })
         .catch( (error) => {
+          debugger;
           return responder.serverError(error);
         });
     }
@@ -75,7 +80,7 @@ export class PetController {
     const petJson = JSON.parse(JSON.stringify(typedRequestBodyParam));
 
     return petRepository
-      .findOne(petJson)
+      .findOne({id: petJson.id})
       .then( (petFound) => {
         return petRepository.save({
           ...petFound,
@@ -86,6 +91,7 @@ export class PetController {
         return responder.success(result);
       })
       .catch( (error) => {
+        debugger;
         return responder.serverError(error);
       });
   }
@@ -108,6 +114,7 @@ export class PetController {
         }
       })
       .catch( (error) => {
+        debugger;
         return responder.serverError(error);
       });
   }
@@ -117,8 +124,14 @@ export class PetController {
   }
 
   public findPetsByTags(typedRequestBodyParams, responder) {
-    return this.findPet({ tags: typedRequestBodyParams}, true, responder);
-  }
+    let tagsNameArray = [];
+
+    for (let index = 0; index < typedRequestBodyParams.length; index += 1) {
+      tagsNameArray.push({ name: typedRequestBodyParams[index]});
+    }
+
+    return this.findPet({ tags: tagsNameArray}, true, responder);
+}
 
   public getPetById(idParam, responder) {
     return this.findPet({ id: idParam}, false, responder);
@@ -141,6 +154,7 @@ export class PetController {
         return responder.success(result);
       })
       .catch( (error) => {
+        debugger;
         return responder.serverError(error);
       });
   }

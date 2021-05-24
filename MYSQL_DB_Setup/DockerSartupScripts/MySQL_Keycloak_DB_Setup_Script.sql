@@ -1,7 +1,7 @@
 -- If keycloak database exists leave it alone!!!!
 
-IF ( NOT EXISTS ( SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'keycloak'))
-BEGIN
+-- IF NOT EXISTS ( SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'keycloak')
+-- BEGIN
   CREATE DATABASE IF NOT EXISTS  keycloak character set latin1;
 
   CREATE USER IF NOT EXISTS 'kuser'@'%' IDENTIFIED BY 'Pa55w0rd';
@@ -47,4 +47,4 @@ BEGIN
   GRANT Lock tables ON keycloak.* TO 'keycloak'@'%';
   GRANT Execute ON keycloak.* TO 'keycloak'@'%';
 
-END
+-- END

@@ -7,7 +7,9 @@ import {
   //UpdateDateColumn,
   OneToOne,
   OneToMany,
-  JoinColumn
+  ManyToMany,
+  JoinColumn,
+  JoinTable
 } from "typeorm";
 
 import Category from "./Category";
@@ -31,19 +33,19 @@ class Pet extends BaseEntity {
   @Column()
   status: string;
 
-  @OneToOne(type => Category)
+  @OneToOne(_type => Category)
   @JoinColumn()
   categoryID: Category;
 
-  @OneToOne(type => Tag)
-  @JoinColumn()
-  tags: Tag;
+  @ManyToMany(type => Tag, tag => tag.id, { cascade: true })
+  @JoinTable()
+  tags: Tag[];
 
-  @OneToOne(type => User)
+  @OneToOne(_type => User)
   @JoinColumn()
   userID: User;
 
-  @OneToMany(type => Order, order => order.id)
+  @OneToMany(type => Order, Order => Order.id)
   orderID: Order[];
 }
 
