@@ -64,6 +64,8 @@
     "no-console": "warn",
     "no-param-reassign": "off",
     "no-loop-func": "off",
-    "class-methods-use-this": "off"
+    "class-methods-use-this": "off",
+
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }]
   }
 }
