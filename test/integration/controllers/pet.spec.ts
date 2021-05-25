@@ -245,7 +245,7 @@ describe("Pet Controller Tests", () => {
       })
   });
 
-  it.only("PET GET findPetsByTags - Get pet(s) by Tags from the petstore", () => {
+  it("PET GET findPetsByTags - Get pet(s) by Tags from the petstore", () => {
     const testRequest = request('http://localhost:10010');
 
     const petJsonTest20 = JSON.parse(JSON.stringify(mockPet.PET_ID_10));
@@ -306,8 +306,9 @@ describe("Pet Controller Tests", () => {
         .query({tags : ['tag20']})
         .set('Accept', 'application/json')
         .expect( (res) => {
+          expect(res.status).to.equal(200);
           expect(res.body.length).to.equal(1);
-          checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest20);
+          checkResResponseBodyAfterPurge(res.status, 200, res.body[0], petJsonTest20);
         })
       })
       .then(() => {
@@ -316,8 +317,9 @@ describe("Pet Controller Tests", () => {
         .query({tags : ['tag21']})
         .set('Accept', 'application/json')
         .expect( (res) => {
+          expect(res.status).to.equal(200);
           expect(res.body.length).to.equal(1);
-          checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest21);
+          checkResResponseBodyAfterPurge(res.status, 200, res.body[0], petJsonTest21);
         })
       })
       .then(() => {

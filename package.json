@@ -49,6 +49,7 @@
     "mssql": "^7.1.0",
     "mysql2": "^2.2.5",
     "openapi-service-skeleton": "file:openapi-service-skeleton-v2.0.0-beta.6.tgz",
+    "reflect-metadata": "^0.1.13",
     "request-data": "^1.4.1",
     "somersault": "^1.3.0",
     "typeorm": "^0.2.32",

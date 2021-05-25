@@ -239,20 +239,20 @@ networks:
 # 	P.*,
 # 	T.Name as TagName
 # FROM petstore.pets P
-# left outer JOIN petstore.pets_tags_id_tags I
+# left outer JOIN petstore.pets_tags_tags I
 # 	ON P.id = I.petsID
 # left outer JOIN petstore.tags T 
 # 	ON I.tagsID = T.id;
 
 # SELECT * FROM petstore.pets;
 # SELECT * FROM petstore.tags;
-# SELECT * FROM petstore.pets_tags_id_tags;
+# SELECT * FROM petstore.pets_tags_tags;
 
 
 # /*
 # drop table petstore.orders;
 # drop table petstore.logMessages;
-# drop table petstore.pets_tags_id_tags;  
+# drop table petstore.pets_tags_tags;  
 # drop table petstore.pets;
 # drop table petstore.users;
 # drop table petstore.tags;

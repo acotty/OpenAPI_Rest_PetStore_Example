@@ -25,9 +25,7 @@ class Pet extends BaseEntity {
   @Column()
   name: string;
 
-  @Column({
-    nullable: true
-  })
+  @Column({nullable: true})
   photoUrls: string;
 
   @Column()
@@ -37,7 +35,7 @@ class Pet extends BaseEntity {
   @JoinColumn()
   categoryID: Category;
 
-  @ManyToMany(type => Tag, tag => tag.id, { cascade: true })
+  @ManyToMany(type => Tag, tag => tag.pets, { cascade: true })
   @JoinTable()
   tags: Tag[];
 

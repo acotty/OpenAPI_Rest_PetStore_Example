@@ -124,14 +124,24 @@ export class PetController {
   }
 
   public findPetsByTags(typedRequestBodyParams, responder) {
-    let tagsNameArray = [];
 
-    for (let index = 0; index < typedRequestBodyParams.length; index += 1) {
-      tagsNameArray.push({ name: typedRequestBodyParams[index]});
-    }
-
-    return this.findPet({ tags: tagsNameArray}, true, responder);
-}
+    return getRepository(mPet)
+            .createQueryBuilder("pet")
+            .leftJoinAndSelect("pet.tags", "tags")
+            .where("tags.name in (:...names)", { names: typedRequestBodyParams})
+            .getMany()
+            .then( (petsFound) => {
+              if (petsFound.length == 0) {
+                return responder.success([]);
+              }  else {
+                return responder.success(petsFound);
+              }
+            })
+            .catch( (error) => {
+              debugger;
+              return responder.serverError(error);
+            });
+          }
 
   public getPetById(idParam, responder) {
     return this.findPet({ id: idParam}, false, responder);

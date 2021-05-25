@@ -17,6 +17,7 @@ import Order from "./models/Order";
 import Pet from "./models/Pet";
 import Tag from "./models/Tag";
 import User from "./models/User";
+import "reflect-metadata";
 
 const container = somersault.createContainer();
 

@@ -7,8 +7,11 @@ import {
   //UpdateDateColumn,
   //OneToOne,
   //OneToMany,
+  ManyToMany,
   //JoinColumn
 } from "typeorm";
+
+import Pet from "./Pet";
 
 @Entity("tags")
 class Tag extends BaseEntity {
@@ -17,6 +20,9 @@ class Tag extends BaseEntity {
 
   @Column()
   name: string;
+
+  @ManyToMany(_type => Pet, pet => pet.tags,)
+  pets: Pet[];
 }
 
 export default Tag;
