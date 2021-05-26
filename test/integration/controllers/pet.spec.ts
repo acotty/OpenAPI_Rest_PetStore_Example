@@ -11,6 +11,7 @@ import * as mockPet from "../../MockData/mockPet";
 import * as chalk from "chalk";
 import * as diff from "diff";
 import { expect } from "chai";
+import * as _ from "lodash";
 
 const emptyStub   =  { };
 const pathDistDirectory = path.join(appRoot.toString(), "dist/src");
@@ -118,7 +119,9 @@ function getPetsAfterTagIDCheck(resultJson, expectedJson) {
   }
 }
 
-function checkResResponseBodyAfterPurge(resultStatus, expectedStatus, resultJson, expectedJson) {
+function checkResResponseBodyAfterPurge(resultStatus, expectedStatus, resultJsonParm, expectedJsonParm) {
+  let resultJson = _.cloneDeep(resultJsonParm);
+  let expectedJson = _.cloneDeep(expectedJsonParm);
   if (resultStatus != expectedStatus) {
     debugger;
     console.error(chalk.red(`resultJson: ${JSON.stringify(resultJson, null, 2)}`));
@@ -308,7 +311,13 @@ describe("Pet Controller Tests", () => {
         .expect( (res) => {
           expect(res.status).to.equal(200);
           expect(res.body.length).to.equal(1);
-          checkResResponseBodyAfterPurge(res.status, 200, res.body[0], petJsonTest20);
+          let expectedJson = _.cloneDeep(petJsonTest20);
+          for(let index=0; index < expectedJson.tags.length; index += 1) {
+            if (expectedJson.tags[index].name !== 'tag20') {
+              expectedJson.tags.splice(index, 1);
+            }
+          }
+          checkResResponseBodyAfterPurge(res.status, 200, res.body[0], expectedJson);
         })
       })
       .then(() => {
@@ -319,7 +328,13 @@ describe("Pet Controller Tests", () => {
         .expect( (res) => {
           expect(res.status).to.equal(200);
           expect(res.body.length).to.equal(1);
-          checkResResponseBodyAfterPurge(res.status, 200, res.body[0], petJsonTest21);
+          let expectedJson = _.cloneDeep(petJsonTest21);
+          for(let index=0; index < expectedJson.tags.length; index += 1) {
+            if (expectedJson.tags[index].name !== 'tag21') {
+              expectedJson.tags.splice(index, 1);
+            }
+          }
+          checkResResponseBodyAfterPurge(res.status, 200, res.body[0], expectedJson);
         })
       })
       .then(() => {
@@ -330,8 +345,27 @@ describe("Pet Controller Tests", () => {
         .expect( (res) => {
           expect(res.status).to.equal(200);
           expect(res.body.length).to.equal(2);
-          checkResResponseBodyAfterPurge(res.status, 200, res.body[0], petJsonTest20);
-          checkResResponseBodyAfterPurge(res.status, 200, res.body[1], petJsonTest21);
+          for(let bIndex=0; bIndex < res.body.length; bIndex += 1) {
+            if (res.body[bIndex].id === 20) {
+              let expectedJson = _.cloneDeep(petJsonTest20);
+              for(let index=0; index < expectedJson.tags.length; index += 1) {
+                if (expectedJson.tags[index].name !== 'both') {
+                  expectedJson.tags.splice(index, 1);
+                }
+              }
+              checkResResponseBodyAfterPurge(res.status, 200, res.body[bIndex], expectedJson);
+            } else if (res.body[bIndex].id === 21) {
+              let expectedJson = _.cloneDeep(petJsonTest21);
+              for(let index=0; index < expectedJson.tags.length; index += 1) {
+                if (expectedJson.tags[index].name !== 'both') {
+                  expectedJson.tags.splice(index, 1);
+                }
+              }
+              checkResResponseBodyAfterPurge(res.status, 200, res.body[bIndex], expectedJson);
+            } else {
+              throw new Error(`Additional results found that are not expected`);
+            }
+          }
         })
       })
       .catch((error) => {
