@@ -156,8 +156,8 @@ describe("Pet Controller Tests", () => {
     return request('http://localhost:10010')
       .post(`/pet`)
       .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
       .send(petJsonTest)
+      .expect('Content-Type', 'application/json')
       .expect( (res) => {
         checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest);
       })
@@ -173,8 +173,8 @@ describe("Pet Controller Tests", () => {
     return request('http://localhost:10010')
       .post(`/pet`)
       .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
       .send(petJsonTest)
+      .expect('Content-Type', 'application/json')
       .expect( (res) => {
         checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest);
       })
@@ -193,8 +193,8 @@ describe("Pet Controller Tests", () => {
     return testRequest
       .post(`/pet`)
       .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
       .send(petJsonTest)
+      .expect('Content-Type', 'application/json')
       .expect( (res) => {
         checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest);
       })
@@ -203,8 +203,8 @@ describe("Pet Controller Tests", () => {
         return testRequest
           .put(`/pet`)
           .set('Accept', 'application/json')
-          .expect('Content-Type', /json/)
           .send(petJsonTest)
+          .expect('Content-Type', 'application/json')
           .expect( (res) => {
             checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest);
         })
@@ -215,7 +215,18 @@ describe("Pet Controller Tests", () => {
       })
   });
 
-  it("PET GET - Get pet by ID #11 from the petstore", () => {
+  it("PET GET - Get NO pet by ID #0 from the petstore", () => {
+    return request('http://localhost:10010')
+      .get(`/pet/0`)
+      .set('Accept', 'application/json')
+      .expect(200, {})
+      .catch((error) => {
+        debugger;
+        throw error;
+      })
+    });
+
+    it("PET GET - Get pet by ID #11 from the petstore", () => {
     const petJsonTest = JSON.parse(JSON.stringify(mockPet.PET_ID_11));
 
     return request('http://localhost:10010')
@@ -278,8 +289,8 @@ describe("Pet Controller Tests", () => {
     return testRequest
       .post(`/pet`)
       .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
       .send(petJsonTest20)
+      .expect('Content-Type', 'application/json')
       .expect( (res) => {
         checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest20);
       })
@@ -287,8 +298,8 @@ describe("Pet Controller Tests", () => {
         return testRequest
         .post(`/pet`)
         .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
         .send(petJsonTest21)
+        .expect('Content-Type', 'application/json')
         .expect( (res) => {
           checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest21);
         })
@@ -375,15 +386,27 @@ describe("Pet Controller Tests", () => {
   });
 
   it("PET DELETE - Delete pet by ID #10 from the petstore", () => {
-    const petJsonTestResult = JSON.parse(JSON.stringify(mockPet.PET_ID_10));
-    delete petJsonTestResult['id'];
+    const testRequest = request('http://localhost:10010');
 
-    return request('http://localhost:10010')
-      .delete(`/pet/${mockPet.PET_ID_10.id}`)
+    const petJsonTest = JSON.parse(JSON.stringify(mockPet.PET_ID_10));
+
+    petJsonTest.id = 30;
+
+    return testRequest
+      .post(`/pet`)
       .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
+      .send(petJsonTest)
+      .expect('Content-Type', 'application/json')
       .expect( (res) => {
-        checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTestResult);
+        checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest);
+      })
+      .then(() => {
+        return testRequest
+        .delete(`/pet/${petJsonTest.id}`)
+        .expect('Content-Type', 'application/json')
+        .expect( (res) => {
+          checkResResponseBodyAfterPurge(res.status, 200, res.body, petJsonTest);
+        })
       })
       .catch((error) => {
         debugger;
@@ -394,11 +417,26 @@ describe("Pet Controller Tests", () => {
 });
 
 
+//  SELECT
+//  	P.*,
+//  	T.Name as TagName
+//  FROM petstore.pets P
+//  left outer JOIN petstore.pets_tags_tags I
+//  	ON P.id = I.petsID
+//  left outer JOIN petstore.tags T
+//  	ON I.tagsID = T.id;
 
-// 	SELECT * FROM petstore.pets p;
-// 	SELECT * FROM petstore.tags p ;
+//  SELECT * FROM petstore.pets;
+//  SELECT * FROM petstore.tags;
+//  SELECT * FROM petstore.pets_tags_tags;
 
 // /*
+// drop table petstore.orders;
+// drop table petstore.logMessages;
+// drop table petstore.pets_tags_tags;
 // drop table petstore.pets;
+// drop table petstore.users;
 // drop table petstore.tags;
+// drop table petstore.categorys;
+// drop table petstore.addresss;
 // */

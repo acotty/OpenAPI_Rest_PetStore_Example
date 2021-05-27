@@ -104,10 +104,14 @@ export class PetController {
       .find(findPetJson)
       .then( (petFound) => {
         if (expectedMultipePets === false) {
-          if (petFound.length == 1) {
-            return responder.success(petFound[0]);
+          if (petFound.length == 0) {
+            return responder.success();
           } else {
-            return responder.serverError(new Error(`Expected one pet from the DB, but DB returned muliple - ${petFound.length}`));
+            if (petFound.length == 1) {
+              return responder.success(petFound[0]);
+            } else {
+              return responder.serverError(new Error(`Expected one pet from the DB, but DB returned muliple - ${petFound.length}`));
+            }
           }
         } else {
           return responder.success(petFound);
@@ -161,6 +165,7 @@ export class PetController {
         return petRepository.remove(petFound)
       })
       .then( (result) => {
+        result.id = idParam;
         return responder.success(result);
       })
       .catch( (error) => {

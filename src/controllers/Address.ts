@@ -1,38 +1,64 @@
+/* eslint-disable no-debugger */
 import { getRepository } from "typeorm";
 import mAddress from "../models/Address";
-import iAddress from "../interfaces/Address";
+// import iAddress from "../interfaces/Address";
 
 export class AddressController {
 
-  private getNotSupportedJsonObject(){
-    const err = new Error();
-    const caller_line = err.stack.split("\n")[2];
-    const index = caller_line.indexOf("at ");
-    const lineDetails = caller_line.slice(index+2, caller_line.length);
-
-    let notSupportedJson = {};
-    notSupportedJson['developerMessage'] = `The rest API has not been coded yet, from ${lineDetails}`;
-    notSupportedJson['userMessage'] = `The rest API has not been coded yet.`;
-    notSupportedJson['moreInfoMessage'] = ``;
-    notSupportedJson['debugMessage'] = ``;
-
-    return notSupportedJson;
-  }
-
   public addAddress(typedRequestBodyParam, responder) {
-    return responder.notSupportedError(this.getNotSupportedJsonObject());
+    const addressRepository = getRepository(mAddress);
+    const addressJson = JSON.parse(JSON.stringify(typedRequestBodyParam));
+
+    return addressRepository
+    .save(addressJson)
+    .then( (resultPet) => {
+      return responder.success(resultPet);
+    })
+    .catch( (error) => {
+      debugger;
+      return responder.serverError(error);
+    });
+
   }
 
   public updateAddress(typedRequestBodyParam, responder) {
-    return responder.notSupportedError(this.getNotSupportedJsonObject());
+    return this.addAddress(typedRequestBodyParam, responder);
   }
 
   public getAddressByID(typedRequestBodyParam, responder) {
-    return responder.notSupportedError(this.getNotSupportedJsonObject());
+    const addressRepository = getRepository(mAddress);
+
+    return addressRepository
+      .find({ id: typedRequestBodyParam})
+      .then( (addressFound) => {
+        if (addressFound.length == 0) {
+          return responder.success();
+        } else {
+          return responder.success(addressFound[0]);
+        }
+      })
+      .catch( (error) => {
+        debugger;
+        return responder.serverError(error);
+      });
   }
 
   public deleteAddress(typedRequestBodyParam, responder) {
-    return responder.notSupportedError(this.getNotSupportedJsonObject());
+    const addressRepository = getRepository(mAddress);
+
+    return addressRepository
+      .findOne({ id: typedRequestBodyParam})
+      .then( (addressFound) => {
+          return addressRepository.remove(addressFound)
+      })
+      .then( (result) => {
+        result.id = typedRequestBodyParam;
+        return responder.success(result);
+      })
+      .catch( (error) => {
+        debugger;
+        return responder.serverError(error);
+      });
   }
 }
 
