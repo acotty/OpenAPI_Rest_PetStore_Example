@@ -69,7 +69,7 @@ function CreateORMConnection() {
       User,
     ],
     synchronize: true,   // True - create tables if they do not exist.
-    logging: true
+    logging: false
   })
   .then((connection) => {
     return connection;

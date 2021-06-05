@@ -9,7 +9,7 @@ import * as appRoot  from "app-root-path";
 import * as path from "path";
 import * as mockPet from "../../MockData/mockPet";
 import * as chalk from "chalk";
-import * as diff from "diff";
+import {diff} from "jest-diff";
 import { expect } from "chai";
 import * as _ from "lodash";
 
@@ -38,20 +38,9 @@ function checkJsonAfterPurge(requestJson, expectedJSON) {
   const expectedJSONPurged = getPurgedObj(expectedJSON);
   if (!fdequal(requestJsonPurged, expectedJSONPurged)) {
     console.error(chalk.red(`Request body does not match expected result.`));
-    console.error(chalk.yellow(`Request body : ${JSON.stringify(requestJson, null, 2)}`));
-    console.error(chalk.yellowBright(`Expected data: ${JSON.stringify(expectedJSON, null, 2)}`));
+    const jdifferences = diff(expectedJSONPurged, requestJsonPurged);
+    process.stderr.write(jdifferences);
 
-    console.error(chalk.red(`Differences are (green add, red removed, gray same):`));
-    const differences = diff.diffJson(requestJson, expectedJSON);
-    differences.forEach((part) => {
-      if (part.added) {
-        process.stderr.write(chalk.green(part.value));
-      } else if (part.removed) {
-        process.stderr.write(chalk.red(part.value));
-      } else {
-        process.stderr.write(chalk.grey(part.value));
-      }
-    });
     debugger;
     throw new Error(`Request body does not match expected result.`);
   }

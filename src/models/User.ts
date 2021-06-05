@@ -13,10 +13,10 @@ import Address from "./Address";
 
 @Entity("users")
 class User extends BaseEntity {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column()
+  @Column({unique: true})
   userName: string;
 
   @Column()
@@ -25,21 +25,27 @@ class User extends BaseEntity {
   @Column()
   lastName: string;
 
-  @Column()
+  @Column({unique: true})
   email: string;
 
   @Column()
   password: string;
 
-  @OneToOne(type => Address)
+  @Column({unique: true})
+  phone: string;
+
+  @OneToOne(_type => Address)
   @JoinColumn()
   addressID: Address;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)", onUpdate: "CURRENT_TIMESTAMP(6)" })
   updated_at: Date;
+
+  @Column()
+  userStatus: number;
 }
 
 export default User;

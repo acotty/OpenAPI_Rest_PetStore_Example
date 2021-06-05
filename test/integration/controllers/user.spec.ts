@@ -7,7 +7,7 @@ import * as proxyquire from "proxyquire";
 import * as fdequal from "fast-deep-equal";
 import * as appRoot  from "app-root-path";
 import * as path from "path";
-import * as mockAddress from "../../MockData/mockAddress";
+import * as mockUser from "../../MockData/mockUser";
 import * as chalk from "chalk";
 import {diff} from "jest-diff";
 // import { expect } from "chai";
@@ -18,6 +18,14 @@ const pathDistDirectory = path.join(appRoot.toString(), "dist/src");
 
 
 function checkResResponseBody(resultJson, expectedJson) {
+  const currentDate = new Date();
+  const updatedDate = new Date(resultJson.updated_at);
+  const diffSeconds = currentDate.getSeconds() - updatedDate.getSeconds();
+  if (diffSeconds < 10) {
+    // Keep compare below happy!!!!
+    expectedJson.updated_at = resultJson.updated_at;
+  }
+
   if (!fdequal(resultJson, expectedJson)) {
     console.error(chalk.red(`Request body does not match expected result.`));
     const jdifferences = diff(expectedJson, resultJson);
@@ -28,7 +36,7 @@ function checkResResponseBody(resultJson, expectedJson) {
   }
 }
 
-describe("Pet Controller Tests", () => {
+describe("User Controller Tests", () => {
   let instance = null;
 
   before(() => {
@@ -46,11 +54,11 @@ describe("Pet Controller Tests", () => {
     }
   });
 
-  it("ADDRESS POST - Add a new address id#100 to the address table", () => {
-    const dataJsonTest = JSON.parse(JSON.stringify(mockAddress.Address_ID_100));
+  it("User POST - Add a new user id#100 to the user table", () => {
+    const dataJsonTest = JSON.parse(JSON.stringify(mockUser.User_ID_100));
 
     return request('http://localhost:10010')
-      .post(`/address`)
+      .post(`/user`)
       .set('Accept', 'application/json')
       .send(dataJsonTest)
       .expect('Content-Type', 'application/json')
@@ -64,11 +72,11 @@ describe("Pet Controller Tests", () => {
       })
   });
 
-  it("ADDRESS POST - Add a new address id#100 to the address table", () => {
-    const dataJsonTest = JSON.parse(JSON.stringify(mockAddress.Address_ID_101));
+  it("User POST - Add a new user id#101 to the user table", () => {
+    const dataJsonTest = JSON.parse(JSON.stringify(mockUser.User_ID_101));
 
     return request('http://localhost:10010')
-      .post(`/address`)
+      .post(`/user`)
       .set('Accept', 'application/json')
       .send(dataJsonTest)
       .expect('Content-Type', 'application/json')
@@ -82,36 +90,33 @@ describe("Pet Controller Tests", () => {
       })
   });
 
-  it("ADDRESS PUT - Add a new address id#30 and update it in the address table", () => {
+  it("User PUT - Add a new user id#30 and update it in the user table", () => {
     const testRequest = request('http://localhost:10010');
 
-    const dataJsonTest = JSON.parse(JSON.stringify(mockAddress.Address_ID_101));
-    dataJsonTest.id = 30;
+    const dataJsonTest = JSON.parse(JSON.stringify(mockUser.User_ID_30));
 
     return testRequest
-      .post(`/address`)
+      .post(`/user`)
       .set('Accept', 'application/json')
       .send(dataJsonTest)
       .expect('Content-Type', /json/)
       .expect(200)
       .expect( (res) => {
-          checkResResponseBody(res.body, dataJsonTest);
+        checkResResponseBody(res.body, dataJsonTest);
       })
       .then(() => {
-        dataJsonTest.street = "Automation Street",
-        dataJsonTest.city = "DDD",
-        dataJsonTest.state = "SuperTest",
-        dataJsonTest.zip = "019283"
+        dataJsonTest.email = "email_222";
+        dataJsonTest.password = "password_222";
+        dataJsonTest.phone = "(00) 1234-2222";
+        dataJsonTest.userStatus = 3;
 
         return testRequest
-          .put(`/address`)
+          .put(`/user/${dataJsonTest.id}`)
           .set('Accept', 'application/json')
-          //.set('Content-Type', 'application/json')
           .send(dataJsonTest)
-          //.expect('Content-Type', /json/)
           .expect(200)
           .expect( (res) => {
-              checkResResponseBody(res.body, dataJsonTest);
+            checkResResponseBody(res.body, dataJsonTest);
           })
       })
       .catch((error) => {
@@ -120,9 +125,9 @@ describe("Pet Controller Tests", () => {
       })
   });
 
-it("Address GET - Get NO Address by ID #0 from the address", () => {
+it("User GET - Get NO User by ID #0 from the user", () => {
   return request('http://localhost:10010')
-    .get(`/address/0`)
+    .get(`/user/0`)
     .set('Accept', 'application/json')
     .expect(200, {})
     .catch((error) => {
@@ -132,11 +137,11 @@ it("Address GET - Get NO Address by ID #0 from the address", () => {
   });
 
 
-  it("Address GET - Get Address by ID #101 from the address", () => {
-    const dataJsonTest = JSON.parse(JSON.stringify(mockAddress.Address_ID_101));
+  it("User GET - Get User by ID #101 from the user", () => {
+    const dataJsonTest = JSON.parse(JSON.stringify(mockUser.User_ID_101));
 
     return request('http://localhost:10010')
-      .get(`/address/${dataJsonTest.id}`)
+      .get(`/user/${dataJsonTest.id}`)
       .set('Accept', 'application/json')
       .expect(200)
       .expect( (res) => {
@@ -146,36 +151,60 @@ it("Address GET - Get NO Address by ID #0 from the address", () => {
         debugger;
         throw error;
       })
-    });
+  });
 
-
-  it("PET DELETE - Delete pet by ID #200 after adding it from the petstore", () => {
-    const testRequest = request('http://localhost:10010');
-    const dataJsonTest = JSON.parse(JSON.stringify(mockAddress.Address_ID_101));
-
-    dataJsonTest.id = 200;
-
-    return testRequest
-      .post(`/address`)
+  it("User GET - Get no User by non sensical userName from the user", () => {
+    return request('http://localhost:10010')
+      .get(`/user/name/What-Name`)
       .set('Accept', 'application/json')
-      .send(dataJsonTest)
-      .expect('Content-Type', 'application/json')
+      .expect(200, {})
+      .catch((error) => {
+        debugger;
+        throw error;
+      })
+  });
+
+  it("User GET - Get userName by mock #101 userName from the userstore", () => {
+    const dataJsonTest = JSON.parse(JSON.stringify(mockUser.User_ID_101));
+
+    return request('http://localhost:10010')
+      .get(`/user/name/${dataJsonTest.userName}`)
+      .set('Accept', 'application/json')
       .expect(200)
       .expect( (res) => {
-          checkResResponseBody(res.body, dataJsonTest);
+        checkResResponseBody(res.body, dataJsonTest);
       })
-      .then(() => {
-        return testRequest
-          .get(`/address/${dataJsonTest.id}`)
+      .catch((error) => {
+        debugger;
+        throw error;
+      })
+  });
+
+
+  it.only("User DELETE - Delete user by ID #200 after adding it from the userstore", () => {
+    const testRequest = request('http://localhost:10010');
+    const dataJsonTest = JSON.parse(JSON.stringify(mockUser.User_ID_101));
+
+    return testRequest
+    .get(`/user/${dataJsonTest.id}`)
+    .set('Accept', 'application/json')
+      .expect(200)
+      .expect( (res) => {
+        if (!Object.prototype.hasOwnProperty.call(res.body, 'id')) {
+          return testRequest
+          .post(`/user`)
           .set('Accept', 'application/json')
+          .send(dataJsonTest)
+          .expect('Content-Type', 'application/json')
           .expect(200)
           .expect( (res) => {
-            checkResResponseBody(res.body, dataJsonTest);
+              checkResResponseBody(res.body, dataJsonTest);
           })
+        }
       })
       .then(() => {
         return testRequest
-          .delete(`/address/${dataJsonTest.id}`)
+          .delete(`/user/${dataJsonTest.id}`)
           .set('Accept', 'application/json')
           .expect(200)
           .expect( (res) => {
@@ -188,6 +217,44 @@ it("Address GET - Get NO Address by ID #0 from the address", () => {
       })
   });
 
+  it("User DELETE - Delete user by userName from mock #200 after adding it from the userstore", () => {
+    const testRequest = request('http://localhost:10010');
+    const dataJsonTest = JSON.parse(JSON.stringify(mockUser.User_ID_101));
+
+    dataJsonTest.id = 200;
+
+    return testRequest
+      .post(`/user`)
+      .set('Accept', 'application/json')
+      .send(dataJsonTest)
+      .expect('Content-Type', 'application/json')
+      .expect(200)
+      .expect( (res) => {
+          checkResResponseBody(res.body, dataJsonTest);
+      })
+      .then(() => {
+        return testRequest
+          .get(`/user/name/${dataJsonTest.userName}`)
+          .set('Accept', 'application/json')
+          .expect(200)
+          .expect( (res) => {
+            checkResResponseBody(res.body, dataJsonTest);
+          })
+      })
+      .then(() => {
+        return testRequest
+          .delete(`/user/name/${dataJsonTest.userName}`)
+          .set('Accept', 'application/json')
+          .expect(200)
+          .expect( (res) => {
+            checkResResponseBody(res.body, dataJsonTest);
+          })
+      })
+      .catch((error) => {
+        debugger;
+        throw error;
+      })
+  });
 });
 
 
