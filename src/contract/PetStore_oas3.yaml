@@ -802,6 +802,13 @@ paths:
             type: integer
             format: int64
       responses:
+        '200':
+          description: successful operation
+          x-gulp-openapi-code-generator-outcome: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '400':
           description: Invalid username supplied
           x-gulp-openapi-code-generator-outcome: badRequestError
@@ -889,6 +896,13 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: successful operation
+          x-gulp-openapi-code-generator-outcome: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '400':
           description: Invalid username supplied
           x-gulp-openapi-code-generator-outcome: badRequestError

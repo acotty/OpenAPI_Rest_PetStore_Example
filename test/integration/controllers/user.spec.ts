@@ -129,7 +129,7 @@ it("User GET - Get NO User by ID #0 from the user", () => {
   return request('http://localhost:10010')
     .get(`/user/0`)
     .set('Accept', 'application/json')
-    .expect(200, {})
+    .expect(404)
     .catch((error) => {
       debugger;
       throw error;
@@ -181,16 +181,18 @@ it("User GET - Get NO User by ID #0 from the user", () => {
   });
 
 
-  it.only("User DELETE - Delete user by ID #200 after adding it from the userstore", () => {
+  it("User DELETE - Delete user by ID #200 after adding it from the userstore", () => {
     const testRequest = request('http://localhost:10010');
     const dataJsonTest = JSON.parse(JSON.stringify(mockUser.User_ID_101));
 
     return testRequest
-    .get(`/user/${dataJsonTest.id}`)
-    .set('Accept', 'application/json')
-      .expect(200)
+      .get(`/user/${dataJsonTest.id}`)
+      .set('Accept', 'application/json')
       .expect( (res) => {
-        if (!Object.prototype.hasOwnProperty.call(res.body, 'id')) {
+        return res;
+      })
+      .then((result) => {
+        if (result.statusCode === 404) {  // UserID does not exist, so add user
           return testRequest
           .post(`/user`)
           .set('Accept', 'application/json')

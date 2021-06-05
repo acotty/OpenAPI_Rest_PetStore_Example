@@ -96,7 +96,7 @@ export class UserController {
       .find({ id: userID})
       .then( (userFound) => {
         if (userFound.length == 0) {
-          return responder.success();
+          return responder.notFoundError();
         } else {
           return responder.success(userFound[0]);
         }
@@ -113,10 +113,14 @@ export class UserController {
     return userRepository
       .findOne({ id: userID})
       .then( (userFound) => {
+        if (userFound === undefined) {
+          return responder.notFoundError();
+        } else {
           return userRepository.remove(userFound)
+        }
       })
       .then( (result) => {
-        result.id = userID;
+        result.id = userID;   // Add UserID back into the results as it is not in the deleted object
         return responder.success(result);
       })
       .catch( (error) => {
