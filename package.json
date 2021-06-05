@@ -48,7 +48,7 @@
     "mongodb": "^3.6.9",
     "mssql": "^7.1.0",
     "mysql2": "^2.2.5",
-    "openapi-service-skeleton": "file:openapi-service-skeleton-v2.0.0-beta.7.tgz",
+    "openapi-service-skeleton": "file:openapi-service-skeleton-v2.0.0-beta.9.tgz",
     "reflect-metadata": "^0.1.13",
     "request-data": "^1.4.1",
     "somersault": "^1.3.0",

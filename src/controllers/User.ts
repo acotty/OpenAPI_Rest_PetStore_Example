@@ -28,8 +28,8 @@ export class UserController {
 
     return userRepository
     .save(userJson)
-    .then( (resultPet) => {
-      return responder.success(resultPet);
+    .then( (resultUser) => {
+      return responder.success(resultUser);
     })
     .catch( (error) => {
       debugger;
@@ -38,8 +38,23 @@ export class UserController {
 
   }
 
-  public createUsersWithListInput(typedRequestBodyParam, responder) {
-    return responder.notSupportedError(this.getNotSupportedJsonObject());
+  public addUserArray(userArray, responder) {
+    const userRepository = getRepository(mUser);
+    let addedUserArray = [];
+    try {
+      userArray.forEach(async (user) => {
+        const userJson = JSON.parse(JSON.stringify(user));
+        await userRepository
+        .save(userJson)
+        .then( (resultUser) => {
+          addedUserArray.push(resultUser);
+        })
+      });
+      return responder.success(addedUserArray);
+    } catch(error) {
+      debugger;
+      return responder.serverError(error);
+    }
   }
 
   public updateUserbyID(userID, typedRequestBodyParam, responder) {

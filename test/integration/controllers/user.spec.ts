@@ -90,6 +90,33 @@ describe("User Controller Tests", () => {
       })
   });
 
+  it.only("User POST - Add bulk list of users to the user table", () => {
+    let dataUserArrayJsonTest = [];
+    for(let i =0; i < 5; i = i+1) {
+      let dataJsonTest = JSON.parse(JSON.stringify(mockUser.User_ID_100));
+      dataJsonTest.id = 400 + i;
+      dataJsonTest.userName = `User_${dataJsonTest.id}`;
+      dataJsonTest.email = `email_${dataJsonTest.id}`;
+      dataJsonTest.password = `password_${dataJsonTest.id}`;
+      dataJsonTest.phone = `(00) 9999_${dataJsonTest.id}`;
+      dataUserArrayJsonTest.push(dataJsonTest)
+    }
+
+    return request('http://localhost:10010')
+      .post(`/user/createUserArray`)
+      .set('Accept', 'application/json')
+      .send(dataUserArrayJsonTest)
+      .expect('Content-Type', 'application/json')
+      .expect(200)
+      .expect( (res) => {
+          checkResResponseBody(res.body, dataUserArrayJsonTest);
+      })
+      .catch((error) => {
+        debugger;
+        throw error;
+      })
+  });
+
   it("User PUT - Add a new user id#30 and update it in the user table", () => {
     const testRequest = request('http://localhost:10010');
 

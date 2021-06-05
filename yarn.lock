@@ -7009,9 +7009,9 @@ openapi-enforcer@^1.14.3:
     json-schema-ref-parser "^6.1.0"
     randexp "^0.5.3"
 
-"openapi-service-skeleton@file:openapi-service-skeleton-v2.0.0-beta.7.tgz":
-  version "2.0.0-beta.7"
-  resolved "file:openapi-service-skeleton-v2.0.0-beta.7.tgz#7c468e5fcc9cdbb56db22b5c08ac8722ac5c9cdd"
+"openapi-service-skeleton@file:openapi-service-skeleton-v2.0.0-beta.9.tgz":
+  version "2.0.0-beta.9"
+  resolved "file:openapi-service-skeleton-v2.0.0-beta.9.tgz#90b96254770901fb8b63b1f411a3883bcaa1226b"
   dependencies:
     config "^3.3.6"
     connect-ioc "^1.0.6"
